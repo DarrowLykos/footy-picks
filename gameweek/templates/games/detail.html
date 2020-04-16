@@ -1,0 +1,6 @@
+<h1>{{ game.name }}</h1>
+<ul>
+{% for match in game.matches.all %}
+    <li>{{ match.name }}</li>
+{% endfor %}
+</ul>
