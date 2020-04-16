@@ -5,7 +5,6 @@ from rule.models import Rule
 #import datetime
 from django.utils import timezone
 #from django.contrib.auth.models import User
-from PIL import Image
 
 COUNTRY_CHOICES =(
         ("ENG", "England"),
