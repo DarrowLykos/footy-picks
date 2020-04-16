@@ -5,6 +5,7 @@ from rule.models import Rule
 #import datetime
 from django.utils import timezone
 #from django.contrib.auth.models import User
+from PIL import Image
 
 COUNTRY_CHOICES =(
         ("ENG", "England"),
@@ -149,6 +150,9 @@ class Game(models.Model):
     prize_pool = models.DecimalField(max_digits=10, decimal_places=2)
     _hidden = models.BooleanField(default=False)
     available = models.BooleanField(default=False)
+    #created_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="created_by")
+    #owned_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="owned_by")
+    #password = models.CharField(max_length=100)
     
     def __str__(self):
         return self.name
