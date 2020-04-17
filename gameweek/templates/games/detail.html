@@ -1,6 +1,20 @@
-<h1>{{ game.name }}</h1>
+{% extends 'games/base.html' %}
+
+{% block content %}
+
+<h2>{{ game.name }}</h2>
 <ul>
 {% for match in game.matches.all %}
     <li>{{ match.name }}</li>
 {% endfor %}
+{% if game.is_upcoming %}
+    <a href="{% url 'games:predict' game.id %}">Predict</a>
+{% endif %}
+{% if game.is_finished %}
+    <a href="{% url 'games:results' game.id %}">Results</a>
+{% endif %}
+{% if game.is_live %}
+    <a href="">Live</a>
+{% endif %}
 </ul>
+{% endblock %}

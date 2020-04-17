@@ -1,9 +1,48 @@
-{% if latest_game_list %}
-    <ul>
-    {% for game in latest_game_list %}
-        <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No games are available.</p>
-{% endif %}
+{% extends 'games/base.html' %}
+
+{% block content %}
+<h2>Games</h2>
+<div class="container">
+  <div class="row">
+    <div class="col">
+        {% if live_game_list %}
+            <h3>Live in-play Games</h3>
+            <ul>
+            {% for game in live_game_list %}
+                <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No live in-play games are available.</p>
+        {% endif %}
+    </div>
+    <div class="col">
+        {% if latest_game_list %}
+            <h3>Upcoming Games</h3>
+            <ul>
+            {% for game in latest_game_list %}
+                <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No future games are available.</p>
+        {% endif %}
+    </div>
+    <div class="col">
+        {% if previous_game_list %}
+            <h3>Previous Games</h3>
+            <ul>
+            {% for game in previous_game_list %}
+                <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No previous games are available.</p>
+        {% endif %}
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

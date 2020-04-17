@@ -2,9 +2,11 @@ from django.db import models
 from player.models import Player
 #from player.models import Profile
 from rule.models import Rule
-#import datetime
+#from datetime import datetime
 from django.utils import timezone
 #from django.contrib.auth.models import User
+
+now = timezone.now()
 
 COUNTRY_CHOICES =(
         ("ENG", "England"),
@@ -143,15 +145,32 @@ class Game(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    matches = models.ManyToManyField(Match)
+    matches = models.ManyToManyField(Match, blank=True, null=True)
     entry_fee = models.DecimalField(max_digits=10, decimal_places=2)
     rules = models.ForeignKey(Rule, on_delete=models.CASCADE)
-    prize_pool = models.DecimalField(max_digits=10, decimal_places=2)
+    prize_pool = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     _hidden = models.BooleanField(default=False)
     available = models.BooleanField(default=False)
     #created_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="created_by")
     #owned_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="owned_by")
     #password = models.CharField(max_length=100)
+    aggregated_games = models.ManyToManyField("Game", blank=True, null=True) 
+    
     
     def __str__(self):
         return self.name
+    
+    def validate_dates(self):
+        if self.end_date > self.start_date :
+            return True
+        else:
+            return False
+        
+    def is_live(self):
+        return (self.end_date >= now and self.start_date <= now)
+    
+    def is_upcoming(self):
+        return self.start_date > now
+    
+    def is_finished(self):
+        return self.end_date < now

@@ -13,7 +13,7 @@ class MatchesInline(admin.TabularInline):
 #    model = Game.rules.through
 
 class GameAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'end_date')
+    list_display = ('name', 'start_date', 'end_date', 'total_matches')
     list_filter = ['start_date', 'end_date']
     fieldsets = [
             (None,               {'fields': ['name']}),
@@ -23,6 +23,9 @@ class GameAdmin(admin.ModelAdmin):
         ]
     inlines = [MatchesInline]
     
+    def total_matches(self, obj):
+       return obj.matches.all().count()
+        
 class MatchAdmin(admin.ModelAdmin):
     list_display = ('name', 'status', 'ko_datetime',  'final_score')
     list_filter = ['ko_datetime']
