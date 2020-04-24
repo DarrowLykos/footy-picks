@@ -6,6 +6,7 @@ from rule.models import Rule
 from django.utils import timezone
 import random
 import string
+from picks import calculate_score
 
 # from django.contrib.auth.models import User
 
@@ -206,13 +207,22 @@ class Game(models.Model):
             return False
 
     def is_live(self):
-        return self.end_date >= now >= self.start_date
+        if self.end_date == None:
+            return False
+        else:
+            return self.end_date > now > self.start_date
 
     def is_upcoming(self):
-        return self.start_date > now
+        if self.start_date == None:
+            return False
+        else:
+            return self.start_date > now
 
     def is_finished(self):
-        return self.end_date < now
+        if self.end_date == None:
+            return False
+        else:
+            return self.end_date < now
 
     def status(self):
         if self.is_live():
@@ -235,23 +245,27 @@ class Prediction(models.Model):
     away_score = models.IntegerField(default=0, null=True, blank=True)
     joker = models.BooleanField(default=False)
     submit_date_time = models.DateTimeField(auto_now=True)
-    #TODO: when saved, change the submit date
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="predictions", related_query_name="prediction")
 
     def valid(self):
-        return self.submit_date_time <= self.match.ko_datetime
+        return self.submit_date_time <= self.match.ko_date
 
     def __str__(self):
-        return self.player.name + "|" + self.match + "|" + self.predicted_score()
+        return self.player.user.get_full_name() + "|" + str(self.match) + "|" + self.predicted_score()
+
+    def rules(self):
+        return self.game.rules
 
     def points(self):
-        return 0
+        points = calculate_score(predicted_score=self.predicted_score(),
+                                  actual_score=self.actual_score(),
+                                  joker=self.joker,
+                                  rule_set=self.rules().__dict__
+                                  )
+        return str(points)
 
     def predicted_score(self):
         return str(self.home_score) + "-" + str(self.away_score)
 
     def actual_score(self):
         return self.match.final_score()
-
-    def joker_points(self):
-        return 0

@@ -25,7 +25,7 @@ class GameAdmin(admin.ModelAdmin):
             (None,               {'fields': (('name', 'status'),)}),
             ('Date Information', {'fields': (['start_date', 'end_date'])}),
             ('Money Information', {'fields': (('entry_fee', 'prize_pool'),)}),
-            ('Other Information', {'fields': (('available','super_game', 'public_game'),)}),
+            ('Other Information', {'fields': (('available','is_super_game', 'public_game'),)}),
             ('Rules Information', {'fields': ['rules']}),
             ('Matches Information', {'fields': (('total_matches', 'completed_matches', 'in_play_matches',
                                                    'to_play_matches',),)})
@@ -61,13 +61,14 @@ class CompetitionAdmin(admin.ModelAdmin):
 
 class PredictionAdmin(admin.ModelAdmin):
     list_display = ['player', "match", "valid", ]
-    readonly_fields = ['valid', 'points', 'actual_score', 'predicted_score', 'joker_points']
+    readonly_fields = ['valid', 'points', 'actual_score', 'predicted_score', ]
     list_filter = ['player']
     fieldsets = [
             (None,                  {'fields': (('player', 'valid'),)}),
             ('Prediction',          {'fields': (('match', 'game'), ('home_score', 'away_score', "joker"), )}),
-            ('Scoring',             {'fields': (('actual_score', 'predicted_score'), ('points', 'joker_points')), } )
+            ('Scoring',             {'fields': (('actual_score', 'predicted_score'), 'points'), } )
         ]
+    #TODO: add inline of read only rules
     
     def get_player(self, obj):
         return obj.user.username
