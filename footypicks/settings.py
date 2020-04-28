@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'gameweek.apps.GameweekConfig',
     'player.apps.PlayerConfig',
     'rule.apps.RuleConfig',
+    'team.apps.TeamConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
