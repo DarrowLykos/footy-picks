@@ -54,7 +54,6 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
-
 class Match(models.Model):
     RESULT_CHOICES = (
         ("Home90", "Home win in 90 minutes"),
@@ -125,14 +124,6 @@ class Match(models.Model):
         elif current_datetime > full_time:
             return status[3]
 
-
-class MatchProxy(Match):
-    class Meta:
-        proxy = True
-        verbose_name = "Match (Create)"
-        verbose_name_plural = "Matches (Create)"
-
-
 class Game(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
@@ -144,23 +135,24 @@ class Game(models.Model):
     _hidden = models.BooleanField(default=False)
     available = models.BooleanField(default=False)
     public_game = models.BooleanField(default=True)
-    # created_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="game_created_by")
-    # owned_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="game_owned_by")
-    pword = models.CharField(max_length=100, default=randomised_password)
-    is_super_game = models.BooleanField(default=False)
-    aggregated_games = models.ManyToManyField("Game", blank=True, null=True, related_query_name="super_game", related_name="super_games")
+    created_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="games_created_by")
+    owned_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="games_owned_by")
+    # pword = models.CharField(max_length=100, default=randomised_password)
+    # is_super_game = models.BooleanField(default=False)
+    # aggregated_games = models.ManyToManyField("Game", blank=True, null=True, related_query_name="super_game", related_name="super_games")
     #predictions = models.ManyToManyField(Match.predictions, through=matches)
 
     class Meta:
         ordering = ('-start_date', )
+
     def prize_pool(self):
         pass
 
+    # def get_leagues(self):
+    #     return self.leagues_included_in.all()
+
     def get_matches(self):
-        if self.is_super_game:
-            self.aggregated_games.all()
-        else:
-            return self.matches.all()
+        return self.matches.all()
 
     def total_matches(self):
        return self.matches.all().count()
@@ -237,6 +229,27 @@ class Game(models.Model):
 
     def get_players(self):
         return self.get_predictions().players.all()
+
+class League(models.Model):
+    name = models.CharField(max_length=100)
+    pword = models.CharField(max_length=100, default=randomised_password)
+    members = models.ManyToManyField(Player, blank=True, related_name="leagues_member_of", related_query_name="member_of_league")
+    games = models.ManyToManyField(Game, blank=True, related_query_name="included_in_league", related_name="leagues_included_in")
+    is_private = models.BooleanField(default=False)
+    owned_by = models.ForeignKey(Player, on_delete=models.CASCADE)
+    member_can_add = models.BooleanField("Members can add games", default=False)
+
+    def get_players(self):
+        return self.members.all()
+
+    def total_players(self):
+        return self.members.all().count()
+
+    def get_games(self):
+        return self.games.all()
+
+    def change_password(self):
+        return randomised_password()
 
 class Prediction(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
