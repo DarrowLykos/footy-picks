@@ -16,7 +16,7 @@ class GameAdmin(admin.ModelAdmin):
             (None,               {'fields': (('name', 'status'), ('available', 'public_game'))}),
             ('Date Information', {'fields': (('start_date', 'end_date'),)}),
             ('Money Information', {'fields': (('entry_fee', 'prize_pool'),)}),
-            ('Owner Information', {'fields': ('created_by',)}),
+            ('Owner Information', {'fields': (('created_by','owned_by'), )}),
             ('Rules Information', {'fields': ['rules']}),
             ('Matches Information', {'fields': (('total_matches', 'completed_matches', 'in_play_matches',
                                                    'to_play_matches',),)}),
@@ -64,7 +64,7 @@ class LeagueAdmin(admin.ModelAdmin):
     list_filter = ['owned_by', 'is_private']
     fieldsets = [
         (None, {'fields': ('name', )}),
-        ('League Information', {'fields': (('owned_by', 'pword'), ('is_private', 'member_can_add',) )}),
+        ('League Information', {'fields': (('owned_by', 'pword'), ('is_private', 'member_can_add','accepts_members'))}),
     ]
     inlines = [LeagueMembersInline, LeagueGamesInline]
 

@@ -1,48 +1,59 @@
 {% extends 'games/base.html' %}
 
 {% block content %}
-<h2>Games</h2>
+
+<!-- list of leagues goes here --!>
+<h2>Leagues</h2>
 <div class="container">
   <div class="row">
     <div class="col">
-        {% if live_game_list %}
-            <h3>Live in-play Games</h3>
+        <h3>Available Public Leagues</h3>
+            {% if leagues_join_list %}
             <ul>
-            {% for game in live_game_list %}
-                <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
+            {% for league in leagues_join_list %}
+                <li><a href="#">{{ league.name }}</a></li>
             {% endfor %}
             </ul>
         {% else %}
-            <p>No live in-play games are available.</p>
-        {% endif %}
-    </div>
-    <div class="col">
-        {% if latest_game_list %}
-            <h3>Upcoming Games</h3>
-            <ul>
-            {% for game in latest_game_list %}
-                <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>No future games are available.</p>
-        {% endif %}
-    </div>
-    <div class="col">
-        {% if previous_game_list %}
-            <h3>Previous Games</h3>
-            <ul>
-            {% for game in previous_game_list %}
-                <li><a href="{% url 'games:detail' game.id %}">{{ game.name }}</a></li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>No previous games are available.</p>
+            <p>No leagues available.</p>
         {% endif %}
     </div>
   </div>
 </div>
-
-
-
+<div class="container">
+  <div class="row">
+    <div class="col">
+        <h3>My Leagues</h3>
+        {% if leagues_owner_list %}
+            <ul>
+            {% for league in leagues_owner_list %}
+                <li><a href="{% url 'leagues:league_detail' league.id %}">{{ league.name }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Not an owner of any leagues.</p>
+        {% endif %}
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+        <h3>Joined Leagues</h3>
+        {% if leagues_member_list %}
+            <ul>
+            {% for league in leagues_member_list %}
+                <li><a href="{% url 'leagues:league_detail' league.id %}">{{ league.name }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Not a member of any leagues.</p>
+        {% endif %}
+    </div>
+  </div>
+</div>
+<a href="#">Create League</a>
+<a href="#">Join Private League</a>
 {% endblock %}

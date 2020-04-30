@@ -19,7 +19,8 @@ from django.urls import include, path
 urlpatterns = [
     path('rules/', include('rule.urls')),
     path('players/', include('player.urls')),
-    path('games/', include('gameweek.urls')),
+    path('leagues/', include('gameweek.urls')),
     path('admin/', admin.site.urls),
+    path('teams/', include('team.urls')),
     path('', include('gameweek.urls')),
 ]

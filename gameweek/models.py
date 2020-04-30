@@ -127,11 +127,21 @@ class Game(models.Model):
 class League(models.Model):
     name = models.CharField(max_length=100)
     pword = models.CharField(max_length=100, default=randomised_password)
+    # TODO: add creator by default to members
     members = models.ManyToManyField(Player, blank=True, related_name="leagues_member_of", related_query_name="member_of_league")
     games = models.ManyToManyField(Game, blank=True, related_query_name="included_in_league", related_name="leagues_included_in")
     is_private = models.BooleanField(default=False)
+    # TODO: default owner to created by
     owned_by = models.ForeignKey(Player, on_delete=models.CASCADE)
     member_can_add = models.BooleanField("Members can add games", default=False)
+    accepts_members = models.BooleanField("Accepts new members", default=True)
+
+    def __str__(self):
+        return self.name
+
+    def is_owner(self, user_id):
+        if self.owned_by.id ==  user_id:
+            return True
 
     def get_players(self):
         return self.members.all()
