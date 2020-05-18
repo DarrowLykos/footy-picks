@@ -8,8 +8,10 @@ from django.utils import timezone
 import random
 import string
 from picks import calculate_score
-
+from django.db.models import Count, Sum
+from django.db.models import F
 # from django.contrib.auth.models import User
+from django.db import models
 
 now = timezone.now()
 
@@ -22,7 +24,7 @@ class Game(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    matches = models.ManyToManyField(Match, blank=True, null=True, related_name="games", related_query_name="game")
+    matches = models.ManyToManyField(Match, blank=True, related_name="games", related_query_name="game")
     entry_fee = models.DecimalField(max_digits=10, decimal_places=2)
     rules = models.ForeignKey(Rule, on_delete=models.CASCADE)
     # prize_pool = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -36,6 +38,9 @@ class Game(models.Model):
     # aggregated_games = models.ManyToManyField("Game", blank=True, null=True, related_query_name="super_game", related_name="super_games")
     #predictions = models.ManyToManyField(Match.predictions, through=matches)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         ordering = ('-start_date', )
 
@@ -44,6 +49,12 @@ class Game(models.Model):
 
     # def get_leagues(self):
     #     return self.leagues_included_in.all()
+
+    def get_position(self, player_id):
+        # tally up points per match, per player
+        # determine rank of player_id
+        # return position
+        pass
 
     def get_matches(self):
         return self.matches.all()
@@ -68,9 +79,6 @@ class Game(models.Model):
 
     def time_until_end(self):
         return self.end_date - now
-
-    def __str__(self):
-        return self.name
 
     def is_private(self):
         if self.public_game == False:
@@ -121,8 +129,16 @@ class Game(models.Model):
     def get_predictions(self):
         return self.predictions.all()
 
-    def get_players(self):
-        return self.get_predictions().players.all()
+    def get_players(self, league_id):
+        return self.leagues_included_in.filter(pk=league_id)[0].get_players().order_by('user')
+
+    # TODO: output leaderboard of aggregated scores
+    def leaderboard(self, filter_top=False):
+        lb = self.predictions.filter(game_id=self.id).values('player').annotate(total_points=Sum('points')).order_by('-points')
+        if filter_top == False:
+            return lb
+        else:
+            return lb[:filter_top]
 
 class League(models.Model):
     name = models.CharField(max_length=100)
@@ -139,9 +155,17 @@ class League(models.Model):
     def __str__(self):
         return self.name
 
-    def is_owner(self, user_id):
-        if self.owned_by.id ==  user_id:
+    def is_member(self, user_id):
+        if self.members.filter(id=user_id).exists():
             return True
+        else:
+            return False
+
+    def is_owner(self, user_id):
+        if self.owned_by.id == user_id:
+            return True
+        else:
+            return False
 
     def get_players(self):
         return self.members.all()
@@ -155,6 +179,15 @@ class League(models.Model):
     def change_password(self):
         return randomised_password()
 
+class PredictionManager(models.Manager):
+    def get_leaderboard(self, game_id):
+        lb = self.select_related(
+            'player').filter(
+            game_id=game_id).values(
+            'player').annotate(
+            name=F('player__user__username'), total_points=Sum('points')).order_by('-total_points')
+        return lb
+
 class Prediction(models.Model):
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
@@ -163,6 +196,8 @@ class Prediction(models.Model):
     joker = models.BooleanField(default=False)
     submit_date_time = models.DateTimeField(auto_now=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="predictions", related_query_name="prediction")
+    points = models.IntegerField(default=0)
+    objects = PredictionManager()
 
     def valid(self):
         return self.submit_date_time <= self.match.ko_date
@@ -173,16 +208,31 @@ class Prediction(models.Model):
     def rules(self):
         return self.game.rules
 
-    def points(self):
-        points = calculate_score(predicted_score=self.predicted_score(),
-                                  actual_score=self.actual_score(),
-                                  joker=self.joker,
-                                  rule_set=self.rules().__dict__
-                                  )
-        return str(points)
+    def get_points(self):
+        if self.actual_score() == "N/A":
+            return 0
+        else:
+            points = calculate_score(predicted_score=self.predicted_score(),
+                                      actual_score=self.actual_score(),
+                                      joker=self.joker,
+                                      rule_set=self.rules().__dict__
+                                      )
+            self.points = points
+            return str(points)
 
     def predicted_score(self):
         return str(self.home_score) + "-" + str(self.away_score)
 
     def actual_score(self):
         return self.match.final_score()
+
+
+
+
+    """def aggregated_game_points(game_id):
+        return Prediction.objects.filter(game_id=game_id).values('player').annotate(total_points=Sum('points'))"""
+
+    """def get_player_game_points(self, game_id, player_id):
+        agg_points = self.aggregated_game_points(game_id)
+        player_points = agg_points.get(player_id=player_id)
+        return player_points"""

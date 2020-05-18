@@ -22,5 +22,5 @@ urlpatterns = [
     path('leagues/', include('gameweek.urls')),
     path('admin/', admin.site.urls),
     path('teams/', include('team.urls')),
-    path('', include('gameweek.urls')),
+
 ]

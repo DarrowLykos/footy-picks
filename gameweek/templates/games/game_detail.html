@@ -1,0 +1,32 @@
+<h1>{{ game.name }}</h1>
+Total Matches: {{ game.total_matches }}
+{{ game.status }}
+<div>
+    <ul>
+    {% for match in game.matches.all %}
+        <li>{{ match.name }} {{ match.final_score }}</li>
+    {% endfor %}
+    </ul>
+</div>
+<div>
+    {% if players %}
+    <ol>
+        {% for player in players %}
+        <li>
+            {{ player }}
+        </li>
+        {% endfor %}
+    </ol>
+    {% endif %}
+</div>
+<div>
+    {% if leaderboard %}
+    <ol>
+        {% for player in leaderboard %}
+        <li>
+            {{ player.name }} {{ player.total_points }}
+        </li>
+        {% endfor %}
+    </ol>
+    {% endif %}
+</div>

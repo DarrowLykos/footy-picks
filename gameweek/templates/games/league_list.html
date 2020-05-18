@@ -1,0 +1,12 @@
+
+<!-- list of leagues goes here --!>
+{% if leagues %}
+<ul>
+    {% for league in leagues %}
+    <li><a href="#">{{ league.name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No leagues available.</p>
+{% endif %}
+{% endblock %}

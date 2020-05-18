@@ -30,9 +30,9 @@ class GameAdmin(admin.ModelAdmin):
     #    return obj.matches.all().count()
 
 class PredictionAdmin(admin.ModelAdmin):
-    list_display = ['player', "match", "valid", ]
+    list_display = ['player', "match", "valid", 'points']
     readonly_fields = ['valid', 'points', 'actual_score', 'predicted_score', ]
-    list_filter = ['player']
+    list_filter = ['player', 'match', 'game']
     fieldsets = [
             (None,                  {'fields': (('player', 'valid'),)}),
             ('Prediction',          {'fields': (('match', 'game'), ('home_score', 'away_score', "joker"), )}),

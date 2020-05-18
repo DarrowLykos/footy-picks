@@ -27,7 +27,7 @@
         {% if leagues_owner_list %}
             <ul>
             {% for league in leagues_owner_list %}
-                <li><a href="{% url 'leagues:league_detail' league.id %}">{{ league.name }}</a>
+                <li><a href="{% url 'picks_pages:league_detail' league.id %}">{{ league.name }}</a>
                 </li>
             {% endfor %}
             </ul>
@@ -44,7 +44,7 @@
         {% if leagues_member_list %}
             <ul>
             {% for league in leagues_member_list %}
-                <li><a href="{% url 'leagues:league_detail' league.id %}">{{ league.name }}</a>
+                <li><a href="{% url 'picks_pages:league_detail' league.id %}">{{ league.name }}</a>
                 </li>
             {% endfor %}
             </ul>
