@@ -28,40 +28,41 @@
         <div class="loader"></div>
     </div>
 
+    {% block content %}{% endblock %}
     <!-- Offcanvas Menu Section Begin -->
-    {% block top_menu %}{% endblock %}
+    {% include 'top_menu.html' %}
     <!-- Offcanvas Menu Section End -->
 
     <!-- Header Section Begin -->
-    {% block header %}{% endblock %}
+    {% include 'header.html' %}
     <!-- Header End -->
 
     <!-- Hero Section Begin -->
-    {% block hero %}{% endblock %}
+    {% include 'hero.html' %}
     <!-- Hero Section End -->
 
     <!-- Trending News Section Begin -->
-    {% block trending %}{% endblock %}
+    {% include 'trending.html' %}
     <!-- Trending News Section End -->
 
     <!-- Match Section Begin -->
-    {% block match %}{% endblock %}
+    {% include 'match.html' %}
     <!-- Match Section End -->
 
     <!-- Soccer Section Begin -->
-    {% block soccer %}{% endblock %}
+    {% include 'soccer.html' %}
     <!-- Soccer Section End -->
 
     <!-- Latest Section Begin -->
-    {% block latest %}{% endblock %}
+    {% include 'latest.html' %}
     <!-- Latest Section End -->
 
     <!-- Popular News Section Begin -->
-    {% block news %}{% endblock %}
+    {% include 'news.html' %}
     <!-- Popular News Section End -->
 
     <!-- Footer Section Begin -->
-    {% block footer %}{% endblock %}
+    {% include 'footer.html' %}
     <!-- Footer Section End -->
 
     <!-- Search model Begin -->

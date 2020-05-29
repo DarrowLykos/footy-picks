@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from datetime import datetime
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, FormView
 from player.models import Player
 from .models import Game, League, Prediction
 from player.models import Player
@@ -89,7 +89,9 @@ class CreateLeague(CreateView):
     model = League
     fields = ['name', 'is_private', 'member_can_add', 'accepts_members', 'pword']
     template_name = 'games/league_create.html'
+    #TODO : redirect once submitted
 
+# TODO: only allow owner to edit
 class EditLeague(UpdateView):
     model = League
     fields = ['name', 'is_private', 'member_can_add', 'accepts_members', 'pword']
@@ -97,6 +99,35 @@ class EditLeague(UpdateView):
 
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, pk=self.kwargs.get("league_id"))
+
+class JoinLeague(FormView):
+    model = League
+    template_name = 'games/league_join.html'
+    fields = ['pword']
+    #TODO : error if password is wrong
+    #TODO : error if not accepting members
+
+    #TODO : validate password entered and add member
+
+class LeaveLeague(FormView):
+    model = League
+    template_name = "games/league_leave.html"
+
+class PredictGame(CreateView):
+    model = Prediction
+    template_name = "games/create_predictions.html"
+
+class ViewPredictions(UpdateView):
+    model = Prediction
+    template_name = "games/view_predictions.html"
+
+class CreateGame(CreateView):
+    model = Game
+    template_name = "games/game_create.html"
+
+class EditGame(UpdateView):
+    model = Game
+    template_name = "games/game_edit.html"
 
 # superceded by GCBV
 """def league_detail(request, league_id):
@@ -165,5 +196,5 @@ class EditLeague(UpdateView):
 
 """def predict(request, game_id):
     game = get_object_or_404(Game, pk=game_id)
-    return render(request, 'games/predict.html', {'game': game})
+    return render(request, 'games/create_predict.html', {'game': game})
 """

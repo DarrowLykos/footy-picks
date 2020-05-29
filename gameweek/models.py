@@ -148,12 +148,21 @@ class League(models.Model):
     games = models.ManyToManyField(Game, blank=True, related_query_name="included_in_league", related_name="leagues_included_in")
     is_private = models.BooleanField(default=False)
     # TODO: default owner to created by
-    owned_by = models.ForeignKey(Player, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(Player, null=True, blank=True, on_delete=models.SET_NULL, related_name="created_leagues", related_query_name="league_creator")
+    owned_by = models.ForeignKey(Player, null=True, blank=True,  on_delete=models.SET_NULL, related_name="owned_leagues", related_query_name="league_owner")
     member_can_add = models.BooleanField("Members can add games", default=False)
     accepts_members = models.BooleanField("Accepts new members", default=True)
 
     def __str__(self):
         return self.name
+
+    #TODO: get this save model working on auto-populating fields
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = request.user
+            obj.owned_by = request.user
+        super().save_model(request, obj, form, change)
 
     def is_member(self, user_id):
         if self.members.filter(id=user_id).exists():

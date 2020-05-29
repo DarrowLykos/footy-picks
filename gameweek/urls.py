@@ -9,6 +9,14 @@ app_name = 'picks_pages'
 game_patterns = [
     # ex: /leagues/2/1
     path('', views.GameDetail.as_view(), name='game_detail'),
+    # ex: leagues/2/5/predict
+    path('predict/', views.PredictGame.as_view(), name='predict_game'),
+    # ex: leagues/2/5/prediction/1
+    path('predict/<int:', views.ViewPredictions.as_view(), name='predictions_detail'),
+    # ex: leagues/2/games/create
+    path('new-game/', views.CreateGame.as_view(), name='create_game'),
+    # ex: leagues/2/5/edit
+    path('edit/', views.EditGame.as_view(), name='edit_game'),
 ]
 
 league_patterns = [
@@ -22,35 +30,11 @@ league_patterns = [
     path('create/', views.CreateLeague.as_view(), name='create_league'),
     # ex: leagues/2/edit
     path('<int:league_id>/edit/', views.EditLeague.as_view(), name='edit_league'),
+    # ex: leagues/2/join
+    path('<int:league_id>/join/', views.JoinLeague.as_view(), name='join_league'),
+    # ex: leagues/2/leave
+    path('<int:league_id>/leave/', views.LeaveLeague.as_view(), name='leave_league'),
 ]
 
 urlpatterns = league_patterns
 
-
-
-
-"""
-
-# ex: leagues/2/edit
-path('<int:league_id>/edit/', views.index, name='create'),
-# ex: leagues/2/join
-path('<int:league_id>/join/', views.index, name='join'),
-# ex: leagues/2/leave
-path('<int:league_id>/leave/', views.index, name='leave'),
-# ex: leagues/2/players
-path('<int:league_id>/players/', views.index, name='players'),
-# ex: leagues/2/games/5/
-path('<int:league_id>/games/<int:game_id>/', views.detail, name='detail'),
-# ex: leagues/2/games/5/predict
-path('<int:league_id>/games/<int:game_id>/predict/', views.predict, name='predict'),
-# ex: leagues/2/games/create
-path('<int:league_id>/games/create/', views.index, name='create'),
-# ex: leagues/2/games/5/edit
-path('<int:league_id>/games/<int:game_id>/edit/', views.index, name='create'),
-# ex: leagues/2/games/5/join
-path('<int:league_id>/games/<int:game_id>/join/', views.index, name='join'),
-# ex: leagues/2/games/5/leave
-path('<int:league_id>/games/<int:game_id>/leave/', views.index, name='leave'),
-# ex: leagues/2/games/5/players
-path('<int:league_id>/games/<int:game_id>/players/', views.index, name='players'),
-"""

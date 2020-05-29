@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Footy Picks">
+    <meta name="keywords" content="Specer, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% block title %}<title>Footy Picks</title>{% endblock %}
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Section Begin -->
+    {% include 'base/top_menu.html' %}
+    <!-- Offcanvas Menu Section End -->
+
+    <!-- Header Section Begin -->
+    {% include 'base/header.html' %}
+    <!-- Header End -->
+
+    <!-- Hero Section Begin -->
+    {% include 'base/hero.html' %}
+    <!-- Hero Section End -->
+
+    {% block content %}{% endblock %}
+
+    <!-- Trending News Section Begin -->
+    {% include 'base/trending.html' %}
+    <!-- Trending News Section End -->
+
+    <!-- Match Section Begin -->
+    {% include 'base/match.html' %}
+    <!-- Match Section End -->
+
+    <!-- Soccer Section Begin -->
+    {% include 'base/soccer.html' %}
+    <!-- Soccer Section End -->
+
+    <!-- Latest Section Begin -->
+    {% include 'base/latest.html' %}
+    <!-- Latest Section End -->
+
+    <!-- Popular News Section Begin -->
+    {% include 'base/news.html' %}
+    <!-- Popular News Section End -->
+
+    <!-- Footer Section Begin -->
+    {% include 'base/footer.html' %}
+    <!-- Footer Section End -->
+
+    <!-- Search model Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch"><i class="fa fa-close"></i></div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search model end -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
