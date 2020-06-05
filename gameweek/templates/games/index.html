@@ -1,8 +1,7 @@
-{% extends 'base/base.html' %}
 
-{% block content %}
 {% load static %}
-<!-- list of leagues goes here --!>
+
+<!-- list of leagues goes here -->
 <h2>Leagues</h2>
 <div class="container">
   <div class="row">
@@ -11,7 +10,9 @@
             {% if leagues_join_list %}
             <ul>
             {% for league in leagues_join_list %}
-                <li><a href="#">{{ league.name }}</a></li>
+                <li>{{ league.name }}
+                    <a href="{% url 'picks_pages:join_league' league_id=league.id %}">Join</a>
+                </li>
             {% endfor %}
             </ul>
         {% else %}
@@ -27,7 +28,9 @@
         {% if leagues_owner_list %}
             <ul>
             {% for league in leagues_owner_list %}
-                <li><a href="{% url 'picks_pages:league_detail' league.id %}">{{ league.name }}</a>
+                <li>{{ league.name }}
+                    <a href="{% url 'picks_pages:league_detail' league.id %}">View</a>
+                    <a href="{% url 'picks_pages:edit_league' league.id %}">Edit</a>
                 </li>
             {% endfor %}
             </ul>
@@ -44,7 +47,9 @@
         {% if leagues_member_list %}
             <ul>
             {% for league in leagues_member_list %}
-                <li><a href="{% url 'picks_pages:league_detail' league.id %}">{{ league.name }}</a>
+                <li>{{ league.name }}
+                    <a href="{% url 'picks_pages:league_detail' league.id %}">View</a>
+                    <a href="{% url 'picks_pages:leave_league' league.id %}">Leave</a>
                 </li>
             {% endfor %}
             </ul>
@@ -54,6 +59,5 @@
     </div>
   </div>
 </div>
-<a href="#">Create League</a>
+<a href="{% url 'picks_pages:create_league' %}">Create League</a>
 <a href="#">Join Private League</a>
-{% endblock %}

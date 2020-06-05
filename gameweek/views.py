@@ -6,6 +6,7 @@ from player.models import Player
 from .models import Game, League, Prediction
 from player.models import Player
 
+
 # TODO: change all of these to generic class based views
 # TODO: split leagues HTML and views DRY
 
@@ -16,9 +17,9 @@ class LeagueList(ListView):
     # TODO: do the thing that makes this viewable by logged in users only
     def get_context_data(self, **kwargs):
         try:
-            current_player = self.user.player.id
+            current_player = self.request.user.player.id
         except AttributeError:
-            current_player = None
+             current_player = None
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
@@ -29,7 +30,6 @@ class LeagueList(ListView):
         members__in=[current_player]).exclude(
         owned_by=current_player).order_by('name')[:4]
         context['leagues_owner_list'] = League.objects.filter(
-            members__in=[current_player]).exclude(
             owned_by=current_player).order_by('name')[:4]
         return context
 
@@ -41,14 +41,14 @@ class LeagueDetail(DetailView):
         return get_object_or_404(self.model, pk=self.kwargs.get("league_id"))
 
     def get_context_data(self, **kwargs):
-        try:
-            current_player = self.user.player.id
-        except AttributeError:
-            current_player = None
+        #try:
+        current_player = self.request.user.player.id
+        #except AttributeError:
+            #current_player = None
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        is_owner = self.object.owned_by.id == current_player
+        is_owner = self.object.is_owner == current_player
         is_member = self.object.is_member(current_player)
         # if league.member_can_add and league.objects.filter(members__in=[Player.current_player]):
         if self.object.member_can_add and is_member:
@@ -101,29 +101,40 @@ class EditLeague(UpdateView):
         return get_object_or_404(self.model, pk=self.kwargs.get("league_id"))
 
 class JoinLeague(FormView):
+    #TODO: create form to use
     model = League
     template_name = 'games/league_join.html'
     fields = ['pword']
+    context_object_name = "league"
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, pk=self.kwargs.get("league_id"))
+
     #TODO : error if password is wrong
     #TODO : error if not accepting members
 
     #TODO : validate password entered and add member
 
 class LeaveLeague(FormView):
+    # TODO: create form to use
     model = League
     template_name = "games/league_leave.html"
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, pk=self.kwargs.get("league_id"))
+
 class PredictGame(CreateView):
     model = Prediction
-    template_name = "games/create_predictions.html"
+    template_name = "games/game_predict.html"
 
 class ViewPredictions(UpdateView):
     model = Prediction
-    template_name = "games/view_predictions.html"
+    template_name = "games/game_predict_detail.html"
 
 class CreateGame(CreateView):
     model = Game
     template_name = "games/game_create.html"
+    fields = ['name', 'start_date', 'end_date', 'entry_fee', 'rules', 'matches', 'public_game', ]
 
 class EditGame(UpdateView):
     model = Game
@@ -196,5 +207,5 @@ class EditGame(UpdateView):
 
 """def predict(request, game_id):
     game = get_object_or_404(Game, pk=game_id)
-    return render(request, 'games/create_predict.html', {'game': game})
+    return render(request, 'games/game_predict.html', {'game': game})
 """
