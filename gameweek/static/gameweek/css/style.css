@@ -116,7 +116,7 @@ ol {
 .section-title {
 	position: relative;
 	padding-bottom: 16px;
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 }
 
 .section-title.sidebar-title:before {
@@ -132,6 +132,11 @@ ol {
 	color: #151618;
 	font-weight: 500;
 }
+
+.section-title.sidebar-title ul {
+	list-style-type: none;
+}
+
 
 .section-title:before {
 	position: absolute;
@@ -1458,28 +1463,36 @@ ol {
 }
 
 .schedule-text .st-table table tbody tr td {
-	width: 150px;
+	width: 110px;
 	padding: 16px 0;
 }
 
 .schedule-text .st-table table tbody tr td img {
-	height: 30px;
-	width: 50px;
+
 }
 
-.schedule-text .st-table table tbody tr td h4 {
+.schedule-text .st-table table tbody tr td h5 {
 	line-height: 30px;
 	color: #151618;
 	font-weight: 500;
 }
 
 .schedule-text .st-table table tbody tr td.left-team {
-	padding-left: 20px;
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: right;
+	width: 150px;
+}
+
+.schedule-text .st-table table tbody tr td.left-team-img {
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: right;
+	width: 50px;
 }
 
 .schedule-text .st-table table tbody tr td.left-team img {
 	float: left;
-	margin-right: 10px;
 }
 
 .schedule-text .st-table table tbody tr td.left-team h4 {
@@ -1487,13 +1500,21 @@ ol {
 }
 
 .schedule-text .st-table table tbody tr td.right-team {
-	text-align: right;
-	padding-right: 20px;
+	text-align: left;
+	padding-right: 10px;
+	padding-left: 10px;
+	width: 150px;
+}
+
+.schedule-text .st-table table tbody tr td.right-team-img {
+	text-align: left;
+	padding-right: 10px;
+	padding-left: 10px;
+	width: 50px;
 }
 
 .schedule-text .st-table table tbody tr td.right-team img {
 	float: right;
-	margin-left: 10px;
 }
 
 .schedule-text .st-table table tbody tr td.right-team h4 {
@@ -1504,6 +1525,12 @@ ol {
 	text-align: center;
 }
 
+.schedule-text .st-table table tbody tr td.joker {
+	text-align: right;
+	padding-right: 10px;
+	width: 55px;
+}
+
 .schedule-text .st-table table tbody tr td.st-option h4 {
 	color: #dd1515;
 	text-transform: uppercase;
@@ -1511,9 +1538,28 @@ ol {
 	margin-top: 14px;
 	margin-bottom: 12px;
 }
+.schedule-text .st-table table tbody tr td.st-option .versus {
+    color: #636363;
+	margin-top: 14px;
+	margin-bottom: 12px;
+	padding: 0;
+}
 
+.schedule-text .st-table table tbody tr td.st-option .home {
+    padding-right: 0;
+}
+
+.schedule-text .st-table table tbody tr td.st-option .away {
+    padding-left: 0;
+}
+
+.schedule-text .st-table table tbody tr td.st-option label {
+    visibility: hidden;
+    font-size: 0;
+
+}
 .schedule-text .st-table table tbody tr td.st-option .so-text {
-	font-size: 14px;
+	font-size: 13px;
 	color: #636363;
 }
 
@@ -1528,7 +1574,15 @@ ol {
 .schedule-sidebar .ss-widget ul li {
 	list-style: none;
 	position: relative;
-	padding-left: 22px;
+	padding-left: 10px;
+	padding-bottom:10px;
+}
+
+.schedule-sidebar .ss-widget table tr td {
+	list-style: none;
+	position: relative;
+	padding-left: 10px;
+	padding-bottom:10px;
 }
 
 .schedule-sidebar .ss-widget ul li a {
@@ -1537,23 +1591,13 @@ ol {
 	line-height: 30px;
 }
 
-.schedule-sidebar .ss-widget ul li:before {
-	position: absolute;
-	left: 0;
-	top: 11px;
-	height: 8px;
-	width: 8px;
-	background: #636363;
-	content: "";
-	border-radius: 50%;
-}
+
 
 .schedule-sidebar .ss-league {
-	margin-bottom: 65px;
+	margin-bottom: 15px;
 }
 
 .schedule-sidebar .ss-league .sl-item {
-	margin-bottom: 25px;
 	display: block;
 	overflow: hidden;
 }
@@ -1566,6 +1610,33 @@ ol {
 }
 
 .schedule-sidebar .ss-league .sl-item span {
+	font-size: 14px;
+	color: #2d2d2d;
+	font-weight: 500;
+	overflow: hidden;
+	line-height: 22px;
+	display: inline-block;
+}
+
+.schedule-sidebar .ss-league table {
+	font-size: 14px;
+	color: #2d2d2d;
+	font-weight: 500;
+	overflow: hidden;
+	line-height: 22px;
+	display: inline-block;
+}
+
+.schedule-sidebar .ss-widget table {
+	font-size: 14px;
+	color: #2d2d2d;
+	font-weight: 500;
+	overflow: hidden;
+	line-height: 22px;
+	display: inline-block;
+}
+
+.schedule-sidebar .ss-widget span {
 	font-size: 14px;
 	color: #2d2d2d;
 	font-weight: 500;
@@ -1846,7 +1917,7 @@ ol {
 }
 
 .left-blog-pad {
-	padding-right: 60px;
+	padding-right: 15px;
 }
 
 .bd-text .bd-title {
@@ -2679,4 +2750,42 @@ ol {
 	.blog-hero-section {
 		height: 410px;
 	}
+}
+
+/* my additions */
+
+.right-align {
+    text-align: right;
+}
+
+i.red {
+    color: red;
+}
+
+i.green {
+    color: green;
+}
+
+.joker-select {
+    height: 51px;
+    margin-left: 10px;
+
+}
+
+.joker-formgroup {
+    display: flex;
+    align-items: center;
+    width: 79%;
+}
+
+.joker-label {
+	color: #dd1515;
+	text-transform: uppercase;
+	font-weight: 700;
+	margin-top: 14px;
+	margin-bottom: 12px;
+	}
+
+.form-control.is-invalid {
+
 }

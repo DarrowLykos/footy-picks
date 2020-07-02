@@ -1,0 +1,34 @@
+{% load static %}
+{% block content %}
+{% load humanize %}
+
+<div class="ss-widget">
+    <div class="section-title sidebar-title">
+        <h5>Leaderboard</h5>
+    </div>
+    <table class="table table-sm">
+        {% if leaderboard %}
+        {% for player in leaderboard %}
+        <tr>
+            <td>
+
+                {% if forloop.first %}
+                <i class="fas fa-trophy"></i>
+                {% else %}
+                {{ forloop.counter|ordinal }}
+                {% endif %}
+            </td>
+            <td>{{ player.name }}</td>
+            <td>{{ player.total_points }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td>No players</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+
+{% endblock %}

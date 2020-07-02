@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,8 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'djmoney',
+    'crispy_forms',
+    'extra_views',
+    'django.contrib.humanize',
+    'django_static_fontawesome',
+    'debug_toolbar',
+    'django_tables2',
 
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,6 +85,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'footypicks.wsgi.application'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Media')
+MEDIA_URL = '/media/'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -132,4 +143,12 @@ STATIC_URL = '/static/'
 ]"""
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-LOGIN_URL="/login/"
+LOGIN_URL = "/login/"
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

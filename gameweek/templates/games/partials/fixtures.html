@@ -1,0 +1,39 @@
+{% load static %}
+{% block content %}
+<div class="ss-widget">
+    <div class="section-title sidebar-title">
+        <h5>Fixtures</h5>
+    </div>
+    <div class="st-table">
+        <h4 class="form-group">
+            <table>
+                {% for match in matches %}
+                <tbody>
+                <td class="left-team-img">
+                    <img src="{{ match.home_team.thumbnail.url }}">
+                </td>
+                <td class="left-team">
+                    <h5>{{ match.home_team }}</h5>
+                </td>
+                <td class="st-option">
+                    <div class="so-text">
+                        {{ match.competition }}
+                    </div>
+                    <h4>{{ match.final_score }}</h4>
+                    <div class="so-text">{{ match.status }}</div>
+                    <div class="so-text">{{ match.ko_date }}</div>
+                </td>
+                <td class="right-team">
+                    <h5>{{ match.away_team }}</h5>
+                </td>
+                <td class="right-team-img">
+                    <img src="{{ match.away_team.thumbnail.url }}">
+                </td>
+
+                {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
+{% endblock %}

@@ -63,8 +63,12 @@ class LeagueAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_private', 'owned_by')
     list_filter = ['owned_by', 'is_private']
     fieldsets = [
-        (None, {'fields': ('name', )}),
-        ('League Information', {'fields': (('owned_by', 'created_by', 'pword'), ('is_private', 'member_can_add','accepts_members'))}),
+        (None, {'fields': ('name',)}),
+        ('League Information', {'fields': (('owned_by', 'created_by', 'pword'),
+                                           ('is_private', 'member_can_add', 'accepts_members', 'is_aggregate'),
+                                           ('start_date', 'end_date'),)
+                                }),
+        ('Rules Information', {'fields': ['rules']}),
     ]
     inlines = [LeagueMembersInline, LeagueGamesInline]
 
