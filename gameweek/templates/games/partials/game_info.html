@@ -1,0 +1,72 @@
+{% load static %}
+{% load humanize %}
+{% load my_filters %}
+<div class="ss-league">
+    <div class="section-title sidebar-title">
+        <h5>
+            Status
+        </h5>
+    </div>
+    <div class="sl-item">
+        <span>
+            {% if game.is_live %}
+                <i class="fas fa-circle red"></i>
+                {% elif game.is_upcoming %}
+                <i class="fas fa-circle green"></i>
+                {% elif game.is_finished %}
+                <i class="fas fa-flag-checkered"></i>
+            {% endif %}
+            {{ game.status|title }}
+            {% if game.is_upcoming and view != "predict" %}
+            {{ game.start_date|naturaltime }}
+            <a class="btn primary-btn w-100 mt-3"
+               href="{% url 'picks_pages:predict_game' league_id=league.id game_id=game.id %}">Predict</a>
+            {% elif game.is_upcoming %}
+            {{ game.start_date|naturaltime }}
+            {% endif %}
+        </span>
+    </div>
+</div>
+<div class="ss-league">
+    <div class="section-title sidebar-title">
+        <h5>
+            Dates
+        </h5>
+    </div>
+    <table>
+        <tr>
+            <td>Start:</td>
+            <td class="text-right">{{ game.start_date|date:"jS M Y" }}</td>
+        </tr>
+        <tr>
+            <td>End:</td>
+            <td class="text-right">{{ game.end_date|date:"jS M Y" }}</td>
+        </tr>
+    </table>
+</div>
+{% comment %}
+<div class="ss-league">
+    <div class="section-title sidebar-title">
+        <h5>Prizes</h5>
+    </div>
+    <table class="table table-sm">
+        {% for payout in game.rules.payouts.all %}
+        <tr>
+            <td>{{ payout.position|ordinal }}:</td>
+            <td>{{ payout.percentage|percentage }}</td>
+            {% endfor %}
+    </table>
+</div>
+{% endcomment %}
+<div class="ss-league">
+    <div class="section-title sidebar-title">
+        <h5>Scoring</h5>
+    </div>
+    <table class="w-100">
+        {% for key, value in game.rules.get_scoring.items %}
+        <td>{{ key|title }}:</td>
+        <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

@@ -30,9 +30,9 @@ class GameAdmin(admin.ModelAdmin):
     #    return obj.matches.all().count()
 
 class PredictionAdmin(admin.ModelAdmin):
-    list_display = ['player', "match", "valid", ]
+    list_display = ['player', "match", "valid", 'points']
     readonly_fields = ['valid', 'points', 'actual_score', 'predicted_score', ]
-    list_filter = ['player']
+    list_filter = ['player', 'match', 'game']
     fieldsets = [
             (None,                  {'fields': (('player', 'valid'),)}),
             ('Prediction',          {'fields': (('match', 'game'), ('home_score', 'away_score', "joker"), )}),
@@ -63,8 +63,12 @@ class LeagueAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_private', 'owned_by')
     list_filter = ['owned_by', 'is_private']
     fieldsets = [
-        (None, {'fields': ('name', )}),
-        ('League Information', {'fields': (('owned_by', 'pword'), ('is_private', 'member_can_add','accepts_members'))}),
+        (None, {'fields': ('name',)}),
+        ('League Information', {'fields': (('owned_by', 'created_by', 'pword'),
+                                           ('is_private', 'member_can_add', 'accepts_members', 'is_aggregate'),
+                                           ('start_date', 'end_date'),)
+                                }),
+        ('Rules Information', {'fields': ['rules']}),
     ]
     inlines = [LeagueMembersInline, LeagueGamesInline]
 

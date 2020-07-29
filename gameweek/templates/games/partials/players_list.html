@@ -1,0 +1,25 @@
+{% load static %}
+{% block content %}
+{% load humanize %}
+
+<div class="ss-widget">
+    <div class="section-title sidebar-title">
+        <h5>Participants</h5>
+    </div>
+    <table class="table table-sm">
+        {% for player in players %}
+        <tr>
+            <td>
+                <i class="fas fa-user red"></i>
+            </td>
+            <td>{{ player.name }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><i class="fas fa-users red"></i> TOTAL: {{ players.count }}</td>
+        </tr>
+    </table>
+</div>
+
+
+{% endblock %}

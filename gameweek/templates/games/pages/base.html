@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}<title>Footy Picks</title>{% endblock %}
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'gameweek/css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'gameweek/css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'gameweek/css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'gameweek/css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'gameweek/css/style.css' %}" type="text/css">
+</head>
+<body>
+<!-- Page Preloder -->
+<div id="preloder">
+    <div class="loader"></div>
+</div>
+
+{% include 'games/partials/top_menu.html' %}
+{% include 'games/partials/header.html' %}
+
+<section class="breadcrumb-section set-bg" data-setbg="{% static 'gameweek/img/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bs-text">
+                    <h2>{% block page_title %}{% endblock %}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'games/partials/messages.html' %}
+
+{% block content %}{% endblock %}
+
+
+{% include 'games/partials/footer.html' %}
+
+<div class="search-model">
+    <div class="h-100 d-flex align-items-center justify-content-center">
+        <div class="search-close-switch"><i class="fa fa-close"></i></div>
+        <form class="search-model-form">
+            <input type="text" id="search-input" placeholder="Search here.....">
+        </form>
+    </div>
+</div>
+<!-- Js Plugins -->
+<script src="{% static 'gameweek/js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'gameweek/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'gameweek/js/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'gameweek/js/jquery.slicknav.js' %}"></script>
+<script src="{% static 'gameweek/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'gameweek/js/main.js' %}"></script>
+</body>
+</html>

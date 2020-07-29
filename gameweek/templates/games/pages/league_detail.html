@@ -1,0 +1,23 @@
+{% extends "games/base.html" %}
+
+{% block page_title %}League Info{% endblock %}
+
+{% block content %}
+
+<section class="schedule-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 left-blog-pad">
+                <div class="schedule-text">
+                    {% include 'games/partials/leaderboard_full.html' with leaderboard=leaderboard %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 left-blog-pad">
+                <div class="schedule-text">
+                    {% include 'games/partials/gameweek_list.html' with league=league %}
+                </div>
+            </div>
+</section>
+{% endblock %}

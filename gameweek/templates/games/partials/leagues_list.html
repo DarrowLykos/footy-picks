@@ -1,0 +1,53 @@
+<div class="col-lg-6 left-blog-pad">
+    <div class="schedule-text">
+        <!--<div class="col">
+            <h3>Available Public Leagues</h3>
+            {% if leagues_join_list %}
+            <table>
+                {% for league in leagues_join_list %}
+                <tr>
+                    <td>{{ league.name }}</td>
+                    <td><a href="{% url 'picks_pages:join_league' league_id=league.id %}">Join</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No leagues available.</p>
+            {% endif %}
+        </div>
+        <div class="col">
+            <h3>Owned Leagues</h3>
+            {% if leagues_owner_list %}
+            <table>
+                {% for league in leagues_owned_list %}
+                <tr>
+                    <td>{{ league.name }}</td>
+                    <td><a href="{% url 'picks_pages:league_detail' league.id %}">View</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <p>Not an owner of any leagues.</p>
+            {% endif %}
+        </div>-->
+        <div class="col">
+            {% if leagues_list %}
+            <table class="table">
+                <thead>
+                <th>{{ list_name }}</th>
+                <th></th>
+                </thead>
+                {% for league in leagues_list %}
+                <tr>
+                    <td>{{ league.name }}</td>
+                    <td><a href="{% url 'picks_pages:league_detail' league.id %}"><i class="fas fa-arrow-right"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No leagues.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
