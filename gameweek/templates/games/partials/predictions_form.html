@@ -4,66 +4,76 @@
 <div class="ss-widget">
     <div class="section-title sidebar-title">
         <h5>Predictions</h5>
-        <form method="post">
-            {% csrf_token %}
-            <div class="st-table">
-                <div class="form-group">
-                    <table>
-                        {{ formset.management_form }}
-                        {% for form in formset %}
-                        {% for match in matches %}
-                        {% if forloop.parentloop.counter0 == forloop.counter0 %}
-                        <tbody>
-
-                        <td class="left-team-img">
-                            <img src="{{ match.home_team.thumbnail.url }}">
-                        </td>
-                        <td class="left-team">
-                            <h5>{{ match.home_team }}</h5>
-                        </td>
-                        <td class="st-option">
-                            <div class="so-text">
-                                {{ match.competition }}
-                                {{ form.match.as_hidden }}
-                                {{ form.player.as_hidden }}
-                                {{ form.game.as_hidden }}
-                                {{ form.joker.as_hidden }}
-                            </div>
-                            <div class="row">
-                                <div class="col-5 align-middle home">{{ form.home_score|as_crispy_field }}</div>
-                                <div class="col-2 align-self-center versus">Vs</div>
-                                <div class="col-5 align-middle away">{{ form.away_score|as_crispy_field }}</div>
-                            </div>
-                            <div class="so-text">{{ match.ko_date }}</div>
-                        </td>
-                        <td class="right-team">
-                            <h5>{{ match.away_team }}</h5>
-                        </td>
-                        <td class="right-team-img">
-                            <img src="{{ match.away_team.thumbnail.url }}">
-                        </td>
-                        {% endif %}
-                        {% endfor %}
-                        {% endfor %}
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="form-row align-items-center">
-                <div class="col-fluid joker-formgroup">
-                    <span class="joker-label"><label class="col-form-label" for="formsetJoker">Joker</label></span>
-                    <select name="joker" class="form-control joker-select" id="formsetJoker" required>
-                        {% for match in matches %}
-                        <option id="{{ match.id }}">{{ match.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-fluid text-right">
-                    <button type="submit" class="btn primary-btn">Submit</button>
-                </div>
-            </div>
     </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="st-table">
+            <div class="form-group">
+                <table>
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+                    {% for match in matches %}
+                    {% if forloop.parentloop.counter0 == forloop.counter0 %}
+                    <tbody>
+
+                    <td class="left-team-img">
+                        <img src="{{ match.home_team.thumbnail.url }}">
+                    </td>
+                    <td class="left-team">
+                        <h5>{{ match.home_team }}</h5>
+                    </td>
+                    <td class="st-option">
+                        <div class="so-text">
+                            {{ match.competition }}
+                            {{ form.match.as_hidden }}
+                            {{ form.player.as_hidden }}
+                            {{ form.game.as_hidden }}
+                            {{ form.joker.as_hidden }}
+                        </div>
+                        <div class="row">
+                            {% if match.status == 1 %}
+                            <div class="col-5 align-middle home">{{ form.home_score|as_crispy_field }}</div>
+                            <div class="col-2 align-self-center versus">Vs</div>
+                            <div class="col-5 align-middle away">{{ form.away_score|as_crispy_field }}</div>
+                            {% else %}
+                            <div class="col align-self-center versus">{{ match.status|title }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="so-text">{{ match.ko_date }}</div>
+                    </td>
+                    <td class="right-team">
+                        <h5>{{ match.away_team }}</h5>
+                    </td>
+                    <td class="right-team-img">
+                        <img src="{{ match.away_team.thumbnail.url }}">
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if matches_avail %}
+        <div class="form-row align-items-center">
+            <div class="col-fluid joker-formgroup">
+                <span class="joker-label"><label class="col-form-label" for="formsetJoker">Joker</label></span>
+                <select name="joker" class="form-control joker-select" id="formsetJoker" required>
+                    {% for match in matches_avail %}
+
+                    <option id="{{ match.id }}">{{ match.name }}</option>
+
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-fluid text-right">
+                <button type="submit" class="btn primary-btn">Submit</button>
+            </div>
+        </div>
+        {% else %}
+        <p>No matches available for prediction</p>
+        {% endif %}
 </div>
 </form>
 

@@ -20,11 +20,11 @@ from django.contrib.staticfiles.urls import static
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('rules/', include('rule.urls')),
+    # path('rules/', include('rule.urls')),
     path('players/', include('player.urls')),
-    path('leagues/', include('gameweek.urls')),
+    path('', include('gameweek.urls')),
     path('admin/', admin.site.urls),
-    path('teams/', include('team.urls')),
+    # path('teams/', include('team.urls')),
 
 ]
 

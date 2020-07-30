@@ -10,7 +10,6 @@ game_patterns = [
     # ex: /leagues/2/1
     path('', views.GameDetail.as_view(), name='game_detail'),
     # ex: leagues/2/5/predict
-    # TODO : edit PredictMatches to look at one match at a time, creat new template that loops and inserts this PredictMatches view
     path('predict/', views.PredictMatches.as_view(), name='predict_game'),
     # path('predict/', views.ViewMatches.as_view(), name='predict_game'),
     # ex: leagues/2/5/prediction/1
@@ -20,15 +19,16 @@ game_patterns = [
 ]
 
 league_patterns = [
+    path('', views.HomeView.as_view(), name='home'),
+    path('rules/', views.RulesView.as_view(), name='rules'),
+    path('contact/', views.ContactView.as_view(), name='contact'),
     # ex: /leagues/
-    path('', views.LeagueList.as_view(), name='leagues_list'),
-    # ex: leagues/2/5/confirmation
-    path('confirmation/', views.PredictConfirmation.as_view(), name='predict_confirm'),
+    path('leagues/', views.LeagueList.as_view(), name='leagues_list'),
     # ex: /leagues/2/
     # path('<int:league_id>/', views.LeagueDetail.as_view(),  name='league_detail'),
-    path('<int:league_id>/', views.GameList.as_view(), name='league_detail'),
+    path('leagues/<int:league_id>/', views.GameList.as_view(), name='league_detail'),
     # ex: /leagues/2/1
-    path('<int:league_id>/<int:game_id>/', include(game_patterns)),
+    path('leagues/<int:league_id>/<int:game_id>/', include(game_patterns)),
     # ex: leagues/2/games/create
     ##path('new-game/', views.CreateGame.as_view(), name='create_game'),
     # ex: leagues/create
@@ -36,9 +36,9 @@ league_patterns = [
     # ex: leagues/2/edit
     ##path('<int:league_id>/edit/', views.EditLeague.as_view(), name='edit_league'),
     # ex: leagues/2/join
-    path('<int:league_id>/join/', views.JoinLeague.as_view(), name='join_league'),
+    path('leagues/<int:league_id>/join/', views.JoinLeague.as_view(), name='join_league'),
     # ex: leagues/2/leave
-    path('<int:league_id>/leave/', views.LeaveLeague.as_view(), name='leave_league'),
+    path('leagues/<int:league_id>/leave/', views.LeaveLeague.as_view(), name='leave_league'),
 ]
 
 urlpatterns = league_patterns
