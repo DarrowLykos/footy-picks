@@ -1,6 +1,0 @@
-<h2>{{ league.name }}</h2>
-<p>You are attempting to join {{ league.name }}</p>
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Join">
-</form>

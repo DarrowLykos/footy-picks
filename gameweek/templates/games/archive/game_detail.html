@@ -1,0 +1,101 @@
+{% extends "games/base.html" %}
+{% load humanize %}
+{% block page_title %}{{league.name}}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if not league.is_aggregate %}
+    <div class="row">
+        <h2>{{ game.name }}</h2>
+        {% if game.is_upcoming %}
+        <button type="button" class="btn btn-primary" onclick=window.location.href="{% url
+        'picks_pages:predict_game' league_id=league.id game_id=game.id %}">Submit Predictions</button>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col">Total Matches: {{ game.total_matches }}</div>
+        <div class="col">Status: {{ game.status }}</div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Matches</h3>
+            <table class="table">
+                <thead>
+                <th>Fixture</th>
+                <th>Date</th>
+                <th>Final Score</th>
+                </thead>
+                {% for match in game.get_matches %}
+                <tr>
+                    <td>{{ match.name }}</td>
+                    <td>{{ match.ko_date }}</td>
+                    <td>{{ match.final_score }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col">
+            <h3>Leaderboard</h3>
+            <table class="table">
+                <thead>
+                <th>Pos</th>
+                <th>Player</th>
+                <th>Points</th>
+                </thead>
+                {% if leaderboard %}
+                {% for player in leaderboard %}
+                <tr>
+                    <td>{{ forloop.counter|ordinal }}</td>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.total_points }}</td>
+                </tr>
+                {% endfor %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td>No Players</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col">
+            <h3>Leaderboard</h3>
+            <table class="table">
+                <thead>
+                <th>Pos</th>
+                <th>Player</th>
+                <th>Games</th>
+                <th>Won</th>
+                <th>Average</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Points</th>
+                </thead>
+                {% if leaderboard %}
+                {% for player in leaderboard %}
+                <tr>
+                    <td>{{ forloop.counter|ordinal }}</td>
+                    <td>{{ player.name }}</td>
+                    <td>30</td>
+                    <td>1</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>4</td>
+                    <td>{{ player.total_points }}</td>
+                </tr>
+                {% endfor %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td>No Players</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -283,11 +283,11 @@ class Prediction(models.Model):
     points = models.IntegerField(default=0, null=True, blank=True)
     objects = PredictionManager()
 
-    def valid(self):
-        return self.submit_date_time <= self.match.ko_date
-
     def __str__(self):
         return self.player.user.get_full_name() + "|" + str(self.match) + "|" + self.predicted_score()
+
+    def valid(self):
+        return self.submit_date_time <= self.match.ko_date
 
     def rules(self):
         return self.game.rules()

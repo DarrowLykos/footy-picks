@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, get_list_or_404
 from datetime import datetime
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, FormView, View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, FormView, TemplateView
 from player.models import Player
 from .models import Game, League, Prediction
 from player.models import Player
@@ -117,7 +117,7 @@ class GameDetail(DetailView):
         context['leaderboard'] = leaderboard
         context['game'] = self.object
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
-        context['title'] = "Game Info"
+        context['title'] = "Results"
         context['view'] = 'result'
         matches = self.object.get_matches()
         context['matches'] = matches
@@ -164,8 +164,8 @@ class LeaveLeague(FormView):
         return get_object_or_404(self.model, pk=self.kwargs.get("league_id"))
 
 
-class PredictConfirmation(View):
-    template_name = "games/prediction_confirmation.html"
+# class PredictConfirmation(View):
+# template_name = "games/prediction_confirmation.html"
 
 
 class PredictMatches(SuccessMessageMixin, ModelFormSetView):
@@ -217,7 +217,6 @@ class PredictMatches(SuccessMessageMixin, ModelFormSetView):
                 form.joker = True
             # form.save()
         formset.save(commit=True)
-        # TODO : validation stops you seeing the value you input 
         # for prediction in predictions:
         # prediction.instance = self.object
         #    prediction.player = Player.objects.get(user=self.request.user)  # use your own profile here
@@ -247,6 +246,7 @@ class PredictMatches(SuccessMessageMixin, ModelFormSetView):
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
         context['view'] = "predict"
         context['title'] = "Submit Predictions"
+        context['matches_avail'] = matches.filter(ko_date__gte=datetime.now())
         """for match in matches:
             initial_data.append({'match': match})
         if self.request.POST:
@@ -314,6 +314,18 @@ class PredictMatches(SuccessMessageMixin, ModelFormSetView):
 
         #prediction.save()
         return HttpResponseRedirect(self.get_success_url())"""
+
+
+class HomeView(TemplateView):
+    template_name = 'games/pages/home.html'
+
+
+class RulesView(TemplateView):
+    template_name = 'games/pages/rules.html'
+
+
+class ContactView(TemplateView):
+    template_name = 'games/pages/contact.html'
 
 
 class ViewPredictions(UpdateView):

@@ -1,13 +1,14 @@
 {% extends "games/pages/base.html" %}
 {% load static %}
-{% block page_title %}{{ title }}{% endblock %}
+
 
 {% block content %}
+{% include 'games/partials/title.html' with page_title=title %}
 <section class="schedule-section spad">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 left-blog-pad">
-                <div class="schedule-text">
+                <div class="schedule-text bg-light">
                     <h3 class="st-title">{{ league.name }}</h3>
                     {% if league != game %}
                     <h4 class="st-title">{{ game.name }}</h4>
@@ -17,7 +18,7 @@
         </div>
         <div class="row">
             <div class="col-lg-7 left-blog-pad">
-                <div class="schedule-text">
+                <div class="schedule-text bg-light p-1">
                     {% if view == "predict" %}
                     {% include "games/partials/predictions_form.html" with matches=matches game=game %}
                     {% elif view == "result" %}
@@ -29,7 +30,7 @@
             </div>
 
             <div class="col-lg-3">
-                <div class="schedule-sidebar">
+                <div class="schedule-sidebar bg-light p-1">
                     {% if view == "predict" %}
                     {% include "games/partials/players_list.html" with players=players %}
                     {% elif view == "result" %}
@@ -40,7 +41,7 @@
                 </div>
             </div>
             <div class="col-lg-2">
-                <div class="schedule-sidebar">
+                <div class="schedule-sidebar bg-light p-1">
                     {% include "games/partials/game_info.html" with game=game %}
                 </div>
             </div>
