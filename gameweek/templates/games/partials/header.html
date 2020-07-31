@@ -1,0 +1,52 @@
+{% load static %}
+<header class="header-section">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ht-info">
+                        <ul>
+                            <li><a href="#">Sign in</a></li>
+                            <li><a href="{% url 'picks_pages:contact' %}">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header__nav">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="logo">
+                        <a href="{% url 'picks_pages:home' %}"><img src="{% static 'gameweek/img/Footpick1.png' %}"
+                                                                    alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-10">
+                    <div class="nav-menu">
+                        <ul class="main-menu">
+                            <li class="active"><a href="{% url 'picks_pages:home' %}">Home</a></li>
+                            <li><a href="{% url 'picks_pages:leagues_list' %}">Leagues</a>
+                                <!--<ul class="dropdown">
+                                    <li><a href="#">League 1</a></li>
+                                    <li><a href="#">League 2</a></li>
+                                    <li><a href="#">League 3</a></li>
+                                    <li><a href="#">League 4</a></li>
+                                </ul>-->
+                            </li>
+                            <li><a href="{% url 'picks_pages:rules' %}">Rules</a></li>
+                            <li><a href="{% url 'picks_pages:contact' %}">Contact</a></li>
+                        </ul>
+                        <!--<div class="nm-right search-switch">
+                            <i class="fa fa-search"></i>
+                        </div-->
+                    </div>
+                </div>
+            </div>
+            <div class="canvas-open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </div>
+</header>
