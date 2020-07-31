@@ -242,6 +242,7 @@ class PredictMatches(SuccessMessageMixin, ModelFormSetView):
         matches = game.get_matches()
         context['matches'] = matches
         players = game.get_players()
+        # TODO: fix players object to show only players who have submitted predictions
         context['players'] = players
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
         context['view'] = "predict"
@@ -317,6 +318,7 @@ class PredictMatches(SuccessMessageMixin, ModelFormSetView):
 
 
 class HomeView(TemplateView):
+    # TODO: fix top_menu.html to match the desktop site
     template_name = 'games/pages/home.html'
 
 

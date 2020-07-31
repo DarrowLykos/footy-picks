@@ -31,12 +31,12 @@
                             {{ form.joker.as_hidden }}
                         </div>
                         <div class="row">
-                            {% if match.status == 1 %}
+                            {% if match.status == "Upcoming" %}
                             <div class="col-5 align-middle home">{{ form.home_score|as_crispy_field }}</div>
                             <div class="col-2 align-self-center versus">Vs</div>
                             <div class="col-5 align-middle away">{{ form.away_score|as_crispy_field }}</div>
                             {% else %}
-                            <div class="col align-self-center versus">{{ match.status|title }}</div>
+                            <div class="col align-self-center versus"><i class="fas fa-lock"></i></div>
                             {% endif %}
                         </div>
                         <div class="so-text">{{ match.ko_date }}</div>

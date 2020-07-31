@@ -6,8 +6,12 @@
                 <div class="col-lg-6">
                     <div class="ht-info">
                         <ul>
-                            <li><a href="#">Sign in</a></li>
-                            <li><a href="{% url 'picks_pages:contact' %}">Contact</a></li>
+                            {% if user.is_authenticated %}
+                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                            <li>Hello, {{ user.username }}</li>
+                            {% else %}
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
