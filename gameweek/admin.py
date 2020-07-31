@@ -17,7 +17,6 @@ class GameAdmin(admin.ModelAdmin):
             ('Date Information', {'fields': (('start_date', 'end_date'),)}),
             ('Money Information', {'fields': (('entry_fee', 'prize_pool'),)}),
             ('Owner Information', {'fields': (('created_by','owned_by'), )}),
-            ('Rules Information', {'fields': ['rules']}),
             ('Matches Information', {'fields': (('total_matches', 'completed_matches', 'in_play_matches',
                                                    'to_play_matches',),)}),
             #('Leagues Information', {'fields': ['leagues_included_in']}),
