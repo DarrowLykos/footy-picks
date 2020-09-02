@@ -2,7 +2,7 @@
 <header class="header-section">
     <div class="header__top">
         <div class="container">
-            <div class="row">
+            <!--<div class="row">
                 <div class="col-lg-6">
                     <div class="ht-info">
                         <ul>
@@ -14,7 +14,7 @@
                             {% endif %}
                         </ul>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -24,13 +24,14 @@
                 <div class="col-lg-2">
                     <div class="logo">
                         <a href="{% url 'picks_pages:home' %}"><img src="{% static 'gameweek/img/Footpick1.png' %}"
-                                                                    alt=""></a>
+                                                                    height="40" alt=""></a>
                     </div>
                 </div>
                 <div class="col-lg-10">
                     <div class="nav-menu">
                         <ul class="main-menu">
                             <li class="active"><a href="{% url 'picks_pages:home' %}">Home</a></li>
+                            {% if user.is_authenticated %}
                             <li><a href="{% url 'picks_pages:leagues_list' %}">Leagues</a>
                                 <!--<ul class="dropdown">
                                     <li><a href="#">League 1</a></li>
@@ -39,8 +40,17 @@
                                     <li><a href="#">League 4</a></li>
                                 </ul>-->
                             </li>
+                            {% endif %}
                             <li><a href="{% url 'picks_pages:rules' %}">Rules</a></li>
-                            <li><a href="{% url 'picks_pages:contact' %}">Contact</a></li>
+                            <!-- <li><a href="{% url 'picks_pages:contact' %}">Contact</a></li> -->
+                            {% if user.is_authenticated %}
+                            <!-- <li><a href="{% url 'picks_pages:player_profile' pk=user.id %}">My Profile</a></li>-->
+                            <li><a href="{% url 'logout' %}">Logout</a></li>
+
+                            {% else %}
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                            <!--<li><a href="#">Signup</a></li>-->
+                            {% endif %}
                         </ul>
                         <!--<div class="nm-right search-switch">
                             <i class="fa fa-search"></i>

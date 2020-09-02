@@ -10,9 +10,11 @@
         {% for player in players %}
         <tr>
             <td>
-                <i class="fas fa-user red"></i>
+                {% if user.username == player.name %}
+                <abbr title="You"><i class="fas fa-user red"></i></abbr>
+                {% endif %}
+                {{ player.name }}
             </td>
-            <td>{{ player.name }}</td>
         </tr>
         {% endfor %}
         <tr>

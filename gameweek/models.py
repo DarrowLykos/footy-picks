@@ -3,7 +3,7 @@ from player.models import Player
 from team.models import Match
 # from player.models import Profile
 from rule.models import Rule
-# from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 import random
 import string
@@ -34,6 +34,7 @@ class Game(models.Model):
     public_game = models.BooleanField(default=True)
     created_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="games_created_by")
     owned_by = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="games_owned_by")
+    last_update = models.DateTimeField(auto_now=True)
     # pword = models.CharField(max_length=100, default=randomised_password)
     # is_super_game = models.BooleanField(default=False)
     # aggregated_games = models.ManyToManyField("Game", blank=True, null=True, related_query_name="super_game", related_name="super_games")
@@ -108,7 +109,7 @@ class Game(models.Model):
         if self.end_date == None:
             return False
         else:
-            return self.end_date > now > self.start_date
+            return self.end_date > now and now > self.start_date
 
     def is_upcoming(self):
         if self.start_date == None:
@@ -135,6 +136,14 @@ class Game(models.Model):
 
     def get_players(self):
         return self.leagues_included_in.all()[0].get_players().order_by('user')
+
+    def update_player_points(self):
+        preds = self.get_predictions()
+        for pred in preds:
+            pred.points = pred.get_points()
+            pred.save()
+        self.last_update = datetime.now()
+        self.save()
 
     # TODO: output leaderboard of aggregated scores
     def leaderboard(self, filter_top=False):
@@ -175,6 +184,7 @@ class League(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     objects = LeagueManager()
+    last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -219,7 +229,7 @@ class League(models.Model):
         if self.end_date == None:
             return False
         else:
-            return self.end_date > now > self.start_date
+            return self.end_date > now and now > self.start_date
 
     def is_upcoming(self):
         if self.start_date == None:
@@ -241,6 +251,11 @@ class League(models.Model):
         else:
             return "to play"
 
+    def update_player_points(self):
+        games = self.get_games()
+
+        for game in games:
+            game.update_player_points()
 
 class PredictionManager(models.Manager):
     def game_leaderboard(self, game_id):
@@ -302,6 +317,7 @@ class Prediction(models.Model):
                                      rule_set=self.rules().__dict__
                                      )
             self.points = points
+            self.save()
             return str(points)
 
     def predicted_score(self):

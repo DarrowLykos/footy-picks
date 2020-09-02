@@ -22,6 +22,8 @@ league_patterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('rules/', views.RulesView.as_view(), name='rules'),
     path('contact/', views.ContactView.as_view(), name='contact'),
+    path('superadmin/', views.SuperAdminView.as_view(), name='superadmin'),
+    path('profile/<int:pk>/', views.PlayerView.as_view(), name='player_profile'),
     # ex: /leagues/
     path('leagues/', views.LeagueList.as_view(), name='leagues_list'),
     # ex: /leagues/2/

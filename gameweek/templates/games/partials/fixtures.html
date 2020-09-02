@@ -13,7 +13,12 @@
                     <img src="{{ match.home_team.thumbnail.url }}">
                 </td>
                 <td class="left-team">
-                    <h5>{{ match.home_team }}</h5>
+                    <div id="content-desktop">
+                        <h5>{{ match.home_team }}</h5>
+                    </div>
+                    <div id="content-mobile">
+                        <h5>{{ match.home_team.short_name }}</h5>
+                    </div>
                 </td>
                 <td class="st-option">
                     <div class="so-text">
@@ -24,7 +29,12 @@
                     <div class="so-text">{{ match.ko_date }}</div>
                 </td>
                 <td class="right-team">
-                    <h5>{{ match.away_team }}</h5>
+                    <div id="content-desktop">
+                        <h5>{{ match.away_team }}</h5>
+                    </div>
+                    <div id="content-mobile">
+                        <h5>{{ match.away_team.short_name }}</h5>
+                    </div>
                 </td>
                 <td class="right-team-img">
                     <img src="{{ match.away_team.thumbnail.url }}">

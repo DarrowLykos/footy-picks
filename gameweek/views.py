@@ -12,10 +12,17 @@ from crispy_forms.helper import FormHelper
 from django.urls import path, re_path, include, reverse_lazy
 from django.contrib import messages
 from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 # TODO: split leagues HTML and views DRY
+
+class SuperAdminView(UserPassesTestMixin, TemplateView):
+    template_name = 'games/pages/superadmin.html'
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
 
 class LeagueList(LoginRequiredMixin, ListView):
     model = League
@@ -30,6 +37,7 @@ class LeagueList(LoginRequiredMixin, ListView):
         context['available_list'] = self.model.objects.get_available_leagues(self.request.user)
 
         return context
+
 
 
 class LeagueDetail(LoginRequiredMixin, DetailView):
@@ -84,6 +92,7 @@ class GameList(LoginRequiredMixin, ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         league = League.objects.get(pk=self.kwargs.get("league_id"))
+        league.update_player_points()
         players = league.get_players()
         leaderboard = Prediction.objects.get_leaderboard(league_id=league.id)
         context['players'] = players
@@ -113,11 +122,12 @@ class GameDetail(DetailView):
         context = super().get_context_data(**kwargs)
         players = self.object.get_players()
         leaderboard = Prediction.objects.get_leaderboard(game_id=self.object.id)
+        self.object.update_player_points()
         context['players'] = players
         context['leaderboard'] = leaderboard
         context['game'] = self.object
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
-        context['title'] = "Results"
+        context['title'] = "Fixtures & Results"
         context['view'] = 'result'
         matches = self.object.get_matches()
         context['matches'] = matches
@@ -325,6 +335,10 @@ class HomeView(TemplateView):
 class RulesView(TemplateView):
     template_name = 'games/pages/rules.html'
 
+
+class PlayerView(DetailView):
+    template_name = 'games/pages/player_profile.html'
+    model = Player
 
 class ContactView(TemplateView):
     template_name = 'games/pages/contact.html'

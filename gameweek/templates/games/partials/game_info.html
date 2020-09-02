@@ -2,10 +2,6 @@
 {% load humanize %}
 {% load my_filters %}
 <div class="ss-league">
-    {% if game.is_upcoming and view != "predict" %}
-    <a class="btn primary-btn w-100 mb-3"
-       href="{% url 'picks_pages:predict_game' league_id=league.id game_id=game.id %}">Predict</a>
-    {% endif %}
     <div class="section-title sidebar-title">
         <h5>
             Status
@@ -13,12 +9,13 @@
     </div>
     <div class="sl-item">
         <span>
-            {% if game.is_live %}
-                <i class="fas fa-circle red"></i>
-                {% elif game.is_upcoming %}
-                <i class="fas fa-circle green"></i>
-                {% elif game.is_finished %}
+            {% if game.is_finished %}
                 <i class="fas fa-flag-checkered"></i>
+            {% elif game.is_live %}
+                <i class="fas fa-circle red"></i>
+            {% elif game.is_upcoming %}
+                <i class="fas fa-circle green"></i>
+
             {% endif %}
             {{ game.status|title }}
             {% if game.is_upcoming and view != "predict" %}

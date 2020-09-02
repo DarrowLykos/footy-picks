@@ -9,9 +9,9 @@
         <th>Pos</th>
         <th>Player</th>
         <th>Played</th>
-        <th>Average</th>
+        <!--<th>Average</th>
         <th>High</th>
-        <th>Low</th>
+        <th>Low</th>-->
         <th>Points</th>
         </thead>
         {% for player in leaderboard %}
@@ -23,11 +23,17 @@
                 {{ forloop.counter|ordinal }}
                 {% endif %}
             </td>
-            <td>{{ player.name }}</td>
+            <td>
+                {% if user.username == player.name %}
+                <abbr title="You"><i class="fas fa-user red"></i></abbr>
+                {% endif %}
+                <a class="text-body" href="{% url 'picks_pages:player_profile' pk=player.player %}">{{ player.name
+                    }}</a>
+            </td>
             <td>{{ player.total_games }}</td>
-            <td>{{ player.average_points|floatformat:2 }}</td>
+            <!--<td>{{ player.average_points|floatformat:2 }}</td>
             <td>{{ player.max_points }}</td>
-            <td>{{ player.min_points }}</td>
+            <td>{{ player.min_points }}</td>-->
             <td>{{ player.total_points }}</td>
         </tr>
         {% endfor %}

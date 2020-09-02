@@ -20,7 +20,12 @@
                         <img src="{{ match.home_team.thumbnail.url }}">
                     </td>
                     <td class="left-team">
-                        <h5>{{ match.home_team }}</h5>
+                        <div id="content-desktop">
+                            <h5>{{ match.home_team }}</h5>
+                        </div>
+                        <div id="content-mobile">
+                            <h5>{{ match.home_team.short_name }}</h5>
+                        </div>
                     </td>
                     <td class="st-option">
                         <div class="so-text">
@@ -32,17 +37,24 @@
                         </div>
                         <div class="row">
                             {% if match.status == "Upcoming" %}
-                            <div class="col-5 align-middle home">{{ form.home_score|as_crispy_field }}</div>
-                            <div class="col-2 align-self-center versus">Vs</div>
-                            <div class="col-5 align-middle away">{{ form.away_score|as_crispy_field }}</div>
+                            <div class="col-6 align-middle home">{{ form.home_score|as_crispy_field }}</div>
+                            <!--<div class="col-2 align-self-center versus">Vs</div>-->
+                            <div class="col-6 align-middle away">{{ form.away_score|as_crispy_field }}</div>
                             {% else %}
+                            <!--<div class="col-5 align-self-center versus"><h4>{{ match.home_score }}</h4></div>-->
                             <div class="col align-self-center versus"><i class="fas fa-lock"></i></div>
+                            <!-- <div class="col-5 align-self-center versus"><h4>{{ match.away_score }}</h4></div>-->
                             {% endif %}
                         </div>
                         <div class="so-text">{{ match.ko_date }}</div>
                     </td>
                     <td class="right-team">
-                        <h5>{{ match.away_team }}</h5>
+                        <div id="content-desktop">
+                            <h5>{{ match.away_team }}</h5>
+                        </div>
+                        <div id="content-mobile">
+                            <h5>{{ match.away_team.short_name }}</h5>
+                        </div>
                     </td>
                     <td class="right-team-img">
                         <img src="{{ match.away_team.thumbnail.url }}">
@@ -67,12 +79,15 @@
                     {% endfor %}
                 </select>
             </div>
+        </div>
+        <div class="form-row align-items-center">
             <div class="col-fluid text-right">
                 <button type="submit" class="btn primary-btn">Submit</button>
             </div>
         </div>
         {% else %}
-        <p>No matches available for prediction</p>
+        <p>No matches available for prediction. <a
+                href="{% url 'picks_pages:game_detail' league_id=league.id game_id=game.id %}">Go to Results.</a></p>
         {% endif %}
 </div>
 </form>

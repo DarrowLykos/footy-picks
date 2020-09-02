@@ -18,7 +18,13 @@
                 {{ forloop.counter|ordinal }}
                 {% endif %}
             </td>
-            <td>{{ player.name }}</td>
+            <td>
+                {% if user.username == player.name %}
+                <abbr title="You"><i class="fas fa-user red"></i></abbr>
+                {% endif %}
+                <a class="text-body" href="{% url 'picks_pages:player_profile' pk=player.player %}">{{ player.name
+                    }}</a>
+            </td>
             <td>{{ player.total_points }}</td>
         </tr>
         {% endfor %}

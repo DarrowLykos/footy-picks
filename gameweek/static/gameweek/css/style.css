@@ -100,7 +100,7 @@ a:hover,
 a:focus {
 	text-decoration: none;
 	outline: none;
-	color: #fff;
+	color: red;
 }
 
 ul,
@@ -1488,7 +1488,7 @@ ol {
 	padding-left: 10px;
 	padding-right: 10px;
 	text-align: right;
-	width: 50px;
+	max-width: 50px;
 }
 
 .schedule-text .st-table table tbody tr td.left-team img {
@@ -1510,7 +1510,7 @@ ol {
 	text-align: left;
 	padding-right: 10px;
 	padding-left: 10px;
-	width: 50px;
+	max-width: 50px;
 }
 
 .schedule-text .st-table table tbody tr td.right-team img {
@@ -2594,6 +2594,20 @@ ol {
 	.left-blog-pad {
 		padding-right: 15px;
 	}
+
+	.schedule-text .st-table table tbody tr td.left-team {
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: right;
+	width: 50px;
+
+	.schedule-text .st-table table tbody tr td.right-team {
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: right;
+	width: 50px;
+}
+}
 }
 
 /* Large Mobile: 480px */
@@ -2774,7 +2788,7 @@ i.green {
 .joker-formgroup {
     display: flex;
     align-items: center;
-    width: 79%;
+    width: 100%;
 }
 
 .joker-label {
@@ -2786,5 +2800,15 @@ i.green {
 	}
 
 .form-control.is-invalid {
+
+}
+
+#content-desktop {display: block;}
+#content-mobile {display: none;}
+
+@media screen and (max-width: 768px) {
+
+#content-desktop {display: none;}
+#content-mobile {display: block;}
 
 }

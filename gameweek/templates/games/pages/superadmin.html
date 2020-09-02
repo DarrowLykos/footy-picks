@@ -1,0 +1,28 @@
+{% extends "games/pages/base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+{% include 'games/partials/title.html' with page_title='Super Admin' %}
+
+<section class="blog-details-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 left-blog-pad">
+                <div class="schedule-text bg-light">
+                    <h3 class="st-title">Update Points</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 left-blog-pad">
+                <div class="schedule-text bg-light">
+                    <p class="p-2">
+                        <a href="#">Update Points</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+</section>
+
+{% endblock %}  

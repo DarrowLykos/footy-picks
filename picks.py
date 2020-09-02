@@ -1,3 +1,4 @@
+# from footypicks.gameweek.models import Prediction
 
 def calculate_score(predicted_score, actual_score, joker, rule_set):
 
@@ -44,8 +45,15 @@ def calculate_score(predicted_score, actual_score, joker, rule_set):
     return (correct_score + correct_result + correct_away_score + correct_home_score) \
            * (rule_set["joker_multiplier"] if joker else 1)
 
-if __name__ == "__main__":
-    #TODO: move these to tests
+
+def calculate_gameweek_scores(gw_id):
+    preds = Prediction.objects.filter(game=gw_id)
+    for pred in preds:
+        pred.points = pred.get_points()
+        pred.save()
+
+
+def tests():
     print("Correct Result: " + str(calculate_score(predicted_score="2-1",
                                                    actual_score="2-0",
                                                    joker=True,
@@ -63,18 +71,23 @@ if __name__ == "__main__":
                                                             "correct_away_score": 0,
                                                             "joker_multiplier": 2})))
     print("Correct home score: " + str(calculate_score(predicted_score="2-1",
-                                                  actual_score="2-1",
-                                                  joker=False,
-                                                  rule_set={"correct_score": 0,
-                                                            "correct_result": 0,
-                                                            "correct_home_score": 3,
-                                                            "correct_away_score": 0,
-                                                            "joker_multiplier": 2})))
+                                                       actual_score="2-1",
+                                                       joker=False,
+                                                       rule_set={"correct_score": 0,
+                                                                 "correct_result": 0,
+                                                                 "correct_home_score": 3,
+                                                                 "correct_away_score": 0,
+                                                                 "joker_multiplier": 2})))
     print("Correct away score: " + str(calculate_score(predicted_score="2-1",
-                                                  actual_score="2-1",
-                                                  joker=False,
-                                                  rule_set={"correct_score": 0,
-                                                            "correct_result": 0,
-                                                            "correct_home_score": 0,
-                                                            "correct_away_score": 1,
-                                                            "joker_multiplier": 2})))
+                                                       actual_score="2-1",
+                                                       joker=False,
+                                                       rule_set={"correct_score": 0,
+                                                                 "correct_result": 0,
+                                                                 "correct_home_score": 0,
+                                                                 "correct_away_score": 1,
+                                                                 "joker_multiplier": 2})))
+
+
+if __name__ == "__main__":
+    print(Prediction.objects.game_leaderboard(1))
+    #TODO: move these to tests
