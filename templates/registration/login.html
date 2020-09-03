@@ -27,7 +27,9 @@
                         {{ form|crispy }}
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
-                    <div class="mt-3"><a href="#">Forgot password?</a></div>
+                    <div class="mt-3"><!--<a href="#">Forgot password?</a>
+                    | -->
+                        <a href="{% url 'signup' %}">Signup?</a></div>
                     {% endif %}
                 </div>
             </div>

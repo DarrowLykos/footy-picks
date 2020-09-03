@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'player.apps.PlayerConfig',
     'rule.apps.RuleConfig',
     'team.apps.TeamConfig',
+    'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'accounts/login/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

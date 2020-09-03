@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('gameweek.urls')),
     path('players/', include('player.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     # path('teams/', include('team.urls')),
 

@@ -27,6 +27,7 @@ class SuperAdminView(UserPassesTestMixin, TemplateView):
 class LeagueList(LoginRequiredMixin, ListView):
     model = League
     template_name = 'games//pages/leagues_list.html'
+    login_url = '/accounts/login/'
 
     def get_context_data(self, **kwargs):
         current_player = self.request.user.player.id
@@ -39,8 +40,7 @@ class LeagueList(LoginRequiredMixin, ListView):
         return context
 
 
-
-class LeagueDetail(LoginRequiredMixin, DetailView):
+class LeagueDetail(DetailView):
     model = League
     template_name = 'games/pages/league_detail.html'
 
@@ -76,7 +76,7 @@ class LeagueDetail(LoginRequiredMixin, DetailView):
         return context
 
 
-class GameList(LoginRequiredMixin, ListView):
+class GameList(ListView):
     model = Game
     template_name = 'games/pages/game_detail.html'
 
@@ -178,12 +178,13 @@ class LeaveLeague(FormView):
 # template_name = "games/prediction_confirmation.html"
 
 
-class PredictMatches(SuccessMessageMixin, ModelFormSetView):
+class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
     model = Prediction
     template_name = "games/pages/game_detail.html"
     # form_class = PredictionFormSet
     fields = ['game', 'player', 'match', 'home_score', 'away_score', 'joker']
     success_message = "Your picks have been submitted"
+    login_url = '/accounts/login/'
 
     def get_success_url(self):
         return reverse_lazy('picks_pages:game_detail',
