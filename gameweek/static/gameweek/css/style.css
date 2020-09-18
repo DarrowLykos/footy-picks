@@ -1451,6 +1451,7 @@ ol {
 	-webkit-transition: all 0.3s;
 	-o-transition: all 0.3s;
 	transition: all 0.3s;
+	height: 161px;
 }
 
 .schedule-text .st-table table tbody tr:last-child {
@@ -1465,13 +1466,28 @@ ol {
 .schedule-text .st-table table tbody tr td {
 	width: 110px;
 	padding: 16px 0;
+	height: 161px;
 }
 
+.schedule-text .st-table table tbody tr.points-total {
+	height: 35px;
+}
+
+.schedule-text .st-table table tbody tr.points-total td {
+	padding: 5px 0 !important;
+	height: 25px !important;
+}
 .schedule-text .st-table table tbody tr td img {
 
 }
 
 .schedule-text .st-table table tbody tr td h5 {
+	line-height: 30px;
+	color: #151618;
+	font-weight: 500;
+}
+
+.schedule-text .st-table table thead tr td h5 {
 	line-height: 30px;
 	color: #151618;
 	font-weight: 500;
@@ -1546,11 +1562,13 @@ ol {
 }
 
 .schedule-text .st-table table tbody tr td.st-option .home {
-    padding-right: 0;
+    padding-right: 1px;
+    padding-left: 10px;
 }
 
 .schedule-text .st-table table tbody tr td.st-option .away {
-    padding-left: 0;
+    padding-left: 1px;
+    padding-right: 10px;
 }
 
 .schedule-text .st-table table tbody tr td.st-option label {
@@ -1564,7 +1582,7 @@ ol {
 }
 
 .schedule-sidebar .ss-widget {
-	margin-bottom: 55px;
+	#margin-bottom: 55px;
 }
 
 .schedule-sidebar .ss-widget.other-sport {
@@ -1624,7 +1642,7 @@ ol {
 	font-weight: 500;
 	overflow: hidden;
 	line-height: 22px;
-	display: inline-block;
+	display: inline-table;
 }
 
 .schedule-sidebar .ss-widget table {
@@ -2779,6 +2797,15 @@ i.green {
     color: green;
 }
 
+i.gold {
+    color: gold;
+}
+
+i.blue {
+    color: blue;
+}
+
+
 .joker-select {
     height: 51px;
     margin-left: 10px;
@@ -2797,12 +2824,22 @@ i.green {
 	font-weight: 700;
 	margin-top: 14px;
 	margin-bottom: 12px;
+	width: 80px;
 	}
 
 .form-control.is-invalid {
+    padding: .375rem .75rem;
+    background-image: unset;
 
 }
 
+.invalid-feedback {
+    font-size: 0;
+}
+
+a .title {
+
+}
 #content-desktop {display: block;}
 #content-mobile {display: none;}
 

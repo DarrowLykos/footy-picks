@@ -4,7 +4,7 @@
 
 <div class="ss-widget">
     <div class="section-title sidebar-title">
-        <h5>Leaderboard</h5>
+        <div class="col"><h5>Leaderboard </h5></div>
     </div>
     <table class="table table-sm">
         {% if leaderboard %}
@@ -13,21 +13,26 @@
             <td>
 
                 {% if forloop.first %}
-                <i class="fas fa-trophy"></i>
+                <i class="fas fa-trophy gold"></i>
                 {% else %}
                 {{ forloop.counter|ordinal }}
                 {% endif %}
             </td>
             <td>
-                {% if user.username == player.name %}
-                <abbr title="You"><i class="fas fa-user red"></i></abbr>
+                <a class="text-body"
+                   href="{% url 'picks_pages:view_predictions' league_id=league.id game_id=game.id player_id=player.player %}">
+                    {% if user.username == player.name %}
+                    <abbr title="You">{{ player.name }}</abbr></a>
+                {% else %}
+                {{ player.name }}</a>
                 {% endif %}
-                <a class="text-body" href="{% url 'picks_pages:player_profile' pk=player.player %}">{{ player.name
-                    }}</a>
             </td>
             <td>{{ player.total_points }}</td>
         </tr>
         {% endfor %}
+        <tr>
+            <td colspan="3"><small><i class="fas fa-info-circle"></i> Click player name to view score breakdown</small>
+        </tr>
         {% else %}
         <tr>
             <td>No players</td>

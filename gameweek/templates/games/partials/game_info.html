@@ -12,9 +12,9 @@
             {% if game.is_finished %}
                 <i class="fas fa-flag-checkered"></i>
             {% elif game.is_live %}
-                <i class="fas fa-circle red"></i>
+                <i class="fas fa-play-circle green"></i>
             {% elif game.is_upcoming %}
-                <i class="fas fa-circle green"></i>
+                <i class="fas fa-calendar"></i>
 
             {% endif %}
             {{ game.status|title }}
@@ -32,14 +32,18 @@
             Dates
         </h5>
     </div>
-    <table>
+    <table class="w-100">
         <tr>
             <td>Start:</td>
-            <td class="text-right">{{ game.start_date|date:"jS M Y" }}</td>
+            <td class="pl-4 pr-2">
+                <div class="float-right">{{ game.start_date|date:"jS M Y" }}</div>
+            </td>
         </tr>
         <tr>
             <td>End:</td>
-            <td class="text-right">{{ game.end_date|date:"jS M Y" }}</td>
+            <td class="pl-4 pr-2">
+                <div class="float-right">{{ game.end_date|date:"jS M Y" }}</div>
+            </td>
         </tr>
     </table>
 </div>
@@ -59,13 +63,42 @@
 {% endcomment %}
 <div class="ss-league">
     <div class="section-title sidebar-title">
-        <h5>Scoring</h5>
+        <div class="row">
+            <div class="col">
+                <h5>Scoring</h5>
+            </div>
+            <div class="col text-right">
+                <abbr class="pr-2" title="
+                Correct Score: correctly guess the exact scoreline
+Correct Result: correctly guess the correct result. e.g. Home, Away or Draw
+Correct Home Score: correctly guess the home team goals
+Correct Away Score: correctly guess the away team goals
+Joker Correct Score: correctly guess the correct score on your Joker
+Joker Correct Result: correctly guess the correct result on your Joker
+Joker Multiplier: Points multiplier on your Joker
+                "><i class="fas fa-info-circle"></i></abbr>
+            </div>
+        </div>
     </div>
     <table class="w-100">
         {% for key, value in game.rules.get_scoring.items %}
         <td>{{ key|title }}:</td>
-        <td>{{ value }}</td>
+        <td class="pl-3 pr-2">
+            <div class="float-right">
+                {% if key != "joker multiplier" %}
+                {{ value }}pts
+                {% else %}
+                X{{ value }}
+                {% endif %}
+            </div>
+        </td>
         </tr>
         {% endfor %}
     </table>
+</div>
+<div class="ss-league">
+    <div class="section-title sidebar-title">
+        <h5>Other Leagues</h5>
+    </div>
+    {% include 'games/partials/leagues_list.html' with leagues_list=member_list list_name='My Leagues' %}
 </div>

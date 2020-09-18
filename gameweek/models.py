@@ -135,7 +135,16 @@ class Game(models.Model):
         return self.predictions.all()
 
     def get_players(self):
-        return self.leagues_included_in.all()[0].get_players().order_by('user')
+        predictions = self.get_predictions()
+        return predictions.select_related('player').values('player').annotate(
+            name=F('player__user__username')).distinct().order_by('player')
+
+    def get_league_players(self, league_id):
+        return self.leagues_included_in.filter(pk=league_id)[0].get_players().order_by('user')
+
+    def get_player_predictions(self, player_id, include_invalid=False):
+        player_predictions = self.get_predictions().filter(player=player_id, replaced=include_invalid)
+        return player_predictions
 
     def update_player_points(self):
         preds = self.get_predictions()
@@ -144,6 +153,23 @@ class Game(models.Model):
             pred.save()
         self.last_update = datetime.now()
         self.save()
+
+    def get_player_points(self, player_id):
+        predictions = self.get_predictions().filter(player_id=player_id)
+        print(predictions)
+        points = predictions.values('player').annotate(total_points=Sum('points'))
+        print(points)
+        try:
+            points = points[0]['total_points']
+            return points
+        except:
+            return 0
+
+    def player_is_member(self, player_id, league_id):
+        if player_id in self.leagues_included_in.get(pk=league_id).members.all():
+            return True
+        else:
+            return False
 
     # TODO: output leaderboard of aggregated scores
     def leaderboard(self, filter_top=False):
@@ -297,12 +323,16 @@ class Prediction(models.Model):
                              related_query_name="prediction")
     points = models.IntegerField(default=0, null=True, blank=True)
     objects = PredictionManager()
+    replaced = models.BooleanField(default=False)
 
     def __str__(self):
         return self.player.user.get_full_name() + "|" + str(self.match) + "|" + self.predicted_score()
 
     def valid(self):
-        return self.submit_date_time <= self.match.ko_date
+        if not self.replaced and (self.submit_date_time <= self.match.ko_date):
+            return True
+        else:
+            return False
 
     def rules(self):
         return self.game.rules()
@@ -316,9 +346,13 @@ class Prediction(models.Model):
                                      joker=self.joker,
                                      rule_set=self.rules().__dict__
                                      )
-            self.points = points
-            self.save()
-            return str(points)
+
+            if self.valid():
+                self.points = points
+                self.save()
+                return str(points)
+            else:
+                return 0
 
     def predicted_score(self):
         return str(self.home_score) + "-" + str(self.away_score)

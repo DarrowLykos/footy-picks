@@ -3,8 +3,9 @@
 {% block content %}
 <div class="ss-widget">
     <div class="section-title sidebar-title">
-        <h5>Predictions</h5>
+        <h5>Your Predictions</h5>
     </div>
+    {% if player_is_member %}
     <form method="post">
         {% csrf_token %}
         <div class="st-table">
@@ -12,10 +13,9 @@
                 <table>
                     {{ formset.management_form }}
                     {% for form in formset %}
-                    {% for match in matches %}
+                    {% for match in matches_avail %}
                     {% if forloop.parentloop.counter0 == forloop.counter0 %}
                     <tbody>
-
                     <td class="left-team-img">
                         <img src="{{ match.home_team.thumbnail.url }}">
                     </td>
@@ -34,16 +34,29 @@
                             {{ form.player.as_hidden }}
                             {{ form.game.as_hidden }}
                             {{ form.joker.as_hidden }}
+
                         </div>
                         <div class="row">
-                            {% if match.status == "Upcoming" %}
+                            {% if match in matches_avail %}
                             <div class="col-6 align-middle home">{{ form.home_score|as_crispy_field }}</div>
                             <!--<div class="col-2 align-self-center versus">Vs</div>-->
                             <div class="col-6 align-middle away">{{ form.away_score|as_crispy_field }}</div>
                             {% else %}
+                            {{ form.home_score.as_hidden }}
+                            {{ form.away_score.as_hidden }}
                             <!--<div class="col-5 align-self-center versus"><h4>{{ match.home_score }}</h4></div>-->
+                            {% for pred in predictions %}
+                            {% if pred.match == match %}
+                            <div class="col-5 align-middle home"><h4>{{ pred.home_score }}</h4></div>
+                            {% endif %}
+                            {% endfor %}
                             <div class="col align-self-center versus"><i class="fas fa-lock"></i></div>
+                            {% for pred in predictions %}
+                            {% if pred.match == match %}
                             <!-- <div class="col-5 align-self-center versus"><h4>{{ match.away_score }}</h4></div>-->
+                            <div class="col-5 align-middle away"><h4>{{ pred.away_score }}</h4></div>
+                            {% endif %}
+                            {% endfor %}
                             {% endif %}
                         </div>
                         <div class="so-text">{{ match.ko_date }}</div>
@@ -63,20 +76,32 @@
                     {% endfor %}
                     {% endfor %}
                     </tr>
+
                     </tbody>
                 </table>
             </div>
         </div>
+        {% include "games/partials/locked_predictions.html" with matches=matches game=game %}
         {% if matches_avail %}
         <div class="form-row align-items-center">
             <div class="col-fluid joker-formgroup">
-                <span class="joker-label"><label class="col-form-label" for="formsetJoker">Joker</label></span>
+                <span class="joker-label"><label class="col-form-label" for="formsetJoker">
+                    Joker
+                    {% if not joker.0.match.status == "Upcoming" and joker.0 %}
+                    <i class="fas fa-lock"></i>
+                    {% endif %}
+                </label>
+                </span>
                 <select name="joker" class="form-control joker-select" id="formsetJoker" required>
+
+                    {% if joker.0.match.status == "Upcoming" or not joker.0 %}
+                    <option id="0">Please Select Joker...</option>
                     {% for match in matches_avail %}
-
                     <option id="{{ match.id }}">{{ match.name }}</option>
-
                     {% endfor %}
+                    {% else %}
+                    <option id="{{ match.id }}">{{ joker.0.match.name }}</option>
+                    {% endif %}
                 </select>
             </div>
         </div>
@@ -89,7 +114,11 @@
         <p>No matches available for prediction. <a
                 href="{% url 'picks_pages:game_detail' league_id=league.id game_id=game.id %}">Go to Results.</a></p>
         {% endif %}
+    </form>
+
+    {% else %}
+    You are not a member of this league. Please join the league before trying to submit your predictions.
+    {% endif %}
 </div>
-</form>
 
 {% endblock %}

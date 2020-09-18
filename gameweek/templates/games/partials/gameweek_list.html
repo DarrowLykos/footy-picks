@@ -16,13 +16,12 @@
         <th class="text-right"></th>
         </thead>
         <tr>
-
             {% for game in league.games.all %}
             <td>
                 {% if game.is_live %}
-                <i class="fas fa-circle red"></i>
+                <i class="fas fa-play-circle green"></i>
                 {% elif game.is_upcoming %}
-                <i class="fas fa-circle green"></i>
+                <i class="fas fa-calendar"></i>
                 {% elif game.is_finished %}
                 <i class="fas fa-flag-checkered"></i>
                 {% endif %}
@@ -46,9 +45,9 @@
     </table>
     <table>
         <tr>
-            <td><i class="fas fa-circle red"></i></td>
+            <td><i class="fas fa-play-circle green"></i></td>
             <td>Live</td>
-            <td><i class="fas fa-circle green"></i></td>
+            <td><i class="fas fa-calendar"></i></td>
             <td>Upcoming</td>
             <td><i class="fas fa-flag-checkered"></i></td>
             <td>Finished</td>

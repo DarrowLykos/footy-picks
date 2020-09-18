@@ -59,6 +59,8 @@ class Rule(models.Model):
     correct_away_score = models.IntegerField(default=0)
     joker_count = models.IntegerField(default=0)
     joker_multiplier = models.IntegerField(default=0)
+    joker_correct_score = models.IntegerField(default=0)
+    joker_correct_result = models.IntegerField(default=0)
     payouts = models.ManyToManyField(Payout, related_name="rules", related_query_name="rule")
 
     # outpays = models.ManyToManyField(Payout, related_name="rules_two", related_query_name="rule_two" , through='RulePayout')

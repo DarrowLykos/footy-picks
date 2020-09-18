@@ -21,7 +21,8 @@ class MatchAdmin(admin.ModelAdmin):
         ('Teams', {'fields': (('home_team', 'away_team', 'competition'),)}),
         ('Score', {'fields': (('home_score', 'away_score', 'result'),)}),
         ('Kick Off', {'fields': (['ko_date'])}),
-        ('Other Information', {'fields': (('extra_time', 'penalties', 'postponed'),)})
+        ('Other Information', {'fields': (('extra_time', 'penalties', 'postponed'),)}),
+        ('API', {'fields': (('api_id',),)}),
     ]
     readonly_fields = ['status']
 
@@ -32,6 +33,7 @@ class CompetitionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': (('name',), 'thumbnail', 'thumbnail_image',)}),
         ('Information', {'fields': (('country', 'comp_type'),)}),
+        ('API', {'fields': (('api_id',),)}),
     ]
 
     def thumbnail_image(self, obj):
@@ -48,6 +50,7 @@ class TeamAdmin(admin.ModelAdmin):
         (None, {'fields': (('name', 'short_name'),)}),
         ('Logo', {'fields': ('thumbnail', 'thumbnail_image')}),
         ('Competition', {'fields': (('country', 'competitions'),)}),
+        ('API', {'fields': (('api_id',),)}),
     ]
 
     def thumbnail_image(self, obj):

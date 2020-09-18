@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from datetime import datetime, timedelta
+import requests
+import time
 
 # Create your models here.
 COUNTRY_CHOICES = (
@@ -27,6 +29,7 @@ class Competition(models.Model):
     country = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default="ENG")
     comp_type = models.CharField("Competition Type", max_length=3, choices=COMP_CHOICES, default="DOL")
     thumbnail = models.ImageField('Logo', blank=True, upload_to="Competition logos/")
+    api_id = models.IntegerField(null=True)
 
     def __str__(self):
         return self.name
@@ -38,6 +41,7 @@ class Team(models.Model):
     thumbnail = models.ImageField('Logo', upload_to="Team logos/")
     country = models.CharField(max_length=3, choices=COUNTRY_CHOICES, default="ENG")
     competitions = models.ManyToManyField(Competition)
+    api_id = models.IntegerField(null=True)
 
     def __str__(self):
         return self.name
@@ -66,11 +70,17 @@ class Match(models.Model):
     penalties = models.BooleanField(default=False)
     extra_time = models.BooleanField(default=False)
     postponed = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, default="Not Started")
     result = models.CharField(max_length=8, choices=RESULT_CHOICES, default="ToPlay")
+    api_id = models.IntegerField(null=True)
+    last_api = models.DateTimeField()
 
     # TODO: something wrong with timezone
     def name(self):
         return self.home_team.name + " vs " + self.away_team.name
+
+    def short_name(self):
+        return self.home_team.short_name + " vs " + self.away_team.short_name
 
     def __str__(self):
         return self.name() + " | " + self.competition.name + " | " + self.ko_date.strftime('%d %b %Y %H:%M')
@@ -80,12 +90,12 @@ class Match(models.Model):
         verbose_name_plural = "Matches"
 
     def final_score(self):
-        if self.result == "ToPlay":
+        if self.status != "Match Finished":
             return "-"
         else:
             return str(self.home_score) + "-" + str(self.away_score)
 
-    def status(self):
+    '''def status(self):
         current_datetime = datetime.now()
         ko_datetime = timezone.make_aware(self.ko_date)
         full_time = self.ko_date + timedelta(hours=1, minutes=45)
@@ -110,10 +120,36 @@ class Match(models.Model):
         elif current_datetime > extra_time and (self.penalties and current_datetime < penalties):
             return status[5]
         elif current_datetime > full_time:
-            return status[3]
+            return status[3]'''
 
     def kick_off(self):
         return self.ko_date.strftime('%H:%M')
 
     def matchday(self):
         return self.ko_date.strftime('%d %b %Y')
+
+    def get_scoreline(self):
+        api_url = "https://www.thesportsdb.com/api/v1/json/1/lookupevent.php?id=" + str(self.api_id)
+        if self.status != "Match Finished" and self.last_api < (datetime.now() - timedelta(minutes=1)):
+            r = requests.get(api_url)
+            if r:
+                self.last_api = datetime.now()
+                result_dict = r.json()['events'][0]
+                home_score = result_dict['intHomeScore']
+                away_score = result_dict['intAwayScore']
+                status = result_dict['strStatus']
+                if status == 'Match Finished':
+                    self.home_score = home_score
+                    self.away_score = away_score
+                    self.status = status
+                    self.save()
+                    return str(home_score) + "-" + str(away_score)
+                else:
+                    print("Match hasn't finished")
+                    return None
+            else:
+                print("No API Data retrieved")
+                return None
+        else:
+            print("Too soon to call API or no need to call")
+            return None

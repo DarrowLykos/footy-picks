@@ -4,22 +4,34 @@
 
 <div class="ss-widget">
     <div class="section-title sidebar-title">
-        <h5>Participants</h5>
+        <div class="row">
+            <div class="col-8">
+                <h5>Involved Players</h5>
+            </div>
+            <div class="col-4 schedule-text">
+                <div class="st-title p-0 mb-0">
+                    {{ players.count }}
+                </div>
+            </div>
+        </div>
     </div>
     <table class="table table-sm">
         {% for player in players %}
         <tr>
             <td>
                 {% if user.username == player.name %}
-                <abbr title="You"><i class="fas fa-user red"></i></abbr>
+                <abbr title="You">{{ player.name }}</abbr></a>
+                {% else %}
+                {{ player.name }}</a>
                 {% endif %}
-                {{ player.name }}
             </td>
         </tr>
         {% endfor %}
-        <tr>
-            <td colspan="2"><i class="fas fa-users red"></i> TOTAL: {{ players.count }}</td>
-        </tr>
+        <!-- <tr class="points-total schedule-text">
+            <td class="st-title">
+                 {{ players.count }}
+            </td>
+        </tr> -->
     </table>
 </div>
 

@@ -11,6 +11,8 @@ game_patterns = [
     path('', views.GameDetail.as_view(), name='game_detail'),
     # ex: leagues/2/5/predict
     path('predict/', views.PredictMatches.as_view(), name='predict_game'),
+    path('performance/<int:player_id>/', views.ViewPredictions.as_view(), name='view_predictions'),
+    # path('edit-predict/', views.EditPredictMatches.as_view(), name='predict_game_edit'),
     # path('predict/', views.ViewMatches.as_view(), name='predict_game'),
     # ex: leagues/2/5/prediction/1
     # path('predict/<int:', views.ViewPredictions.as_view(), name='predictions_detail'),
@@ -22,7 +24,7 @@ league_patterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('rules/', views.RulesView.as_view(), name='rules'),
     path('contact/', views.ContactView.as_view(), name='contact'),
-    path('superadmin/', views.SuperAdminView.as_view(), name='superadmin'),
+    # path('superadmin/', views.SuperAdminView.as_view(), name='superadmin'),
     path('profile/<int:pk>/', views.PlayerView.as_view(), name='player_profile'),
     # ex: /leagues/
     path('leagues/', views.LeagueList.as_view(), name='leagues_list'),
@@ -30,7 +32,7 @@ league_patterns = [
     # path('<int:league_id>/', views.LeagueDetail.as_view(),  name='league_detail'),
     path('leagues/<int:league_id>/', views.GameList.as_view(), name='league_detail'),
     # ex: /leagues/2/1
-    path('leagues/<int:league_id>/<int:game_id>/', include(game_patterns)),
+    path('leagues/<int:league_id>/game/<int:game_id>/', include(game_patterns)),
     # ex: leagues/2/games/create
     ##path('new-game/', views.CreateGame.as_view(), name='create_game'),
     # ex: leagues/create

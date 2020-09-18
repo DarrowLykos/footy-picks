@@ -17,12 +17,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 # TODO: split leagues HTML and views DRY
 
-class SuperAdminView(UserPassesTestMixin, TemplateView):
+'''class SuperAdminView(UserPassesTestMixin, TemplateView):
     template_name = 'games/pages/superadmin.html'
 
     def test_func(self):
-        return self.request.user.is_superuser
-
+        return self.request.user.is_superuser'''
 
 class LeagueList(LoginRequiredMixin, ListView):
     model = League
@@ -70,6 +69,7 @@ class LeagueDetail(DetailView):
         context['is_member'] = is_member
         leaderboard = Prediction.objects.get_leaderboard(league_id=self.object.id)
         context['leaderboard'] = leaderboard
+        context['member_list'] = League.objects.get_members_leagues(self.request.user)
         if self.object.is_aggregate:
             context['aggregate_game'] = self.object.get_aggregate_game().id
 
@@ -91,7 +91,7 @@ class GameList(ListView):
             current_player = None
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        league = League.objects.get(pk=self.kwargs.get("league_id"))
+        league = get_object_or_404(League, pk=self.kwargs.get("league_id"))
         league.update_player_points()
         players = league.get_players()
         leaderboard = Prediction.objects.get_leaderboard(league_id=league.id)
@@ -99,8 +99,9 @@ class GameList(ListView):
         context['leaderboard'] = leaderboard
         context['league'] = league
         context['game'] = league
-        context['title'] = "League Info"
+        context['title'] = "League Table"
         context['view'] = 'league'
+        context['member_list'] = League.objects.get_members_leagues(self.request.user)
         # context['live_games'] = league.games.filter(is_live=True)
         return context
 
@@ -129,6 +130,7 @@ class GameDetail(DetailView):
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
         context['title'] = "Fixtures & Results"
         context['view'] = 'result'
+        context['member_list'] = League.objects.get_members_leagues(self.request.user)
         matches = self.object.get_matches()
         context['matches'] = matches
         return context
@@ -198,23 +200,40 @@ class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
     def get_factory_kwargs(self):
         kwargs = super(PredictMatches, self).get_factory_kwargs()
         game = Game.objects.get(pk=self.kwargs.get("game_id"))
-        matches = game.get_matches()
+        matches = game.get_matches().filter(ko_date__gte=datetime.now())
         kwargs['extra'] = matches.count()
         return kwargs
 
     def get_initial(self):
         game = Game.objects.get(pk=self.kwargs.get("game_id"))
-        matches = Game.objects.get(pk=self.kwargs.get("game_id")).get_matches()
+        matches = Game.objects.get(pk=self.kwargs.get("game_id")).get_matches().filter(ko_date__gte=datetime.now())
         player = Player.objects.get(user=self.request.user)
         initial_data = []
+        predictions = game.get_player_predictions(self.request.user.player)
         for match in matches:
-            initial_data.append({'match': match, 'game': game, 'player': player})
+            if predictions:
+                print(predictions)
+                try:
+
+                    pred = predictions.get(match=match)
+                    print(pred)
+                    initial_data.append({'match': match, 'game': game, 'player': player,
+                                         'home_score': pred.home_score, 'away_score': pred.away_score})
+                except Prediction.DoesNotExist:
+                    initial_data.append({'match': match, 'game': game, 'player': player})
+
+            else:
+                initial_data.append({'match': match, 'game': game, 'player': player})
 
         return initial_data
 
     def get_queryset(self):
         game = Game.objects.get(pk=self.kwargs.get("game_id"))
-        predictions = Prediction.objects.filter(player=self.request.user.player, game=game)
+        predictions = game.get_player_predictions(self.request.user.player)
+        '''if predictions:
+            return predictions
+        else:
+            return Prediction.objects.none()'''
         return Prediction.objects.none()
 
     def formset_valid(self, formset):
@@ -223,10 +242,31 @@ class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
            """
         fs = formset.save(commit=False)
         joker_game = self.request.POST.get('joker', "")
+        game = Game.objects.get(pk=self.kwargs.get("game_id"))
+        predictions = game.get_player_predictions(self.request.user.player)
+        if joker_game == "Please Select Joker...":
+            message = messages.error(self.request, "Error: please select your joker")
+            return self.render_to_response(self.get_context_data(formset=formset))
+        print(self.request.POST)
         for form in fs:
+            print(form)
+            # print(form.has_changed())
+            print(predictions.filter(match=form.match))
+            preds = predictions.filter(match=form.match)
+            for pred in preds:
+                pred.replaced = True
+                pred.save()
             if form.match.name() == joker_game:
                 form.joker = True
             # form.save()
+        for pred in predictions:
+            print(pred.match.name())
+            if joker_game != pred.match.name():
+                pred.joker = False
+            elif joker_game == pred.match.name():
+                pred.joker = True
+            pred.save()
+
         formset.save(commit=True)
         # for prediction in predictions:
         # prediction.instance = self.object
@@ -234,6 +274,7 @@ class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
         #   prediction.game = Game.objects.get(pk=self.kwargs.get("game_id"))
         # prediction.match = Match.objects.get(pk=self.kwargs.get("match_id"))
         #    prediction.save()
+
         message = messages.success(self.request, "Picks Submitted")
         return HttpResponseRedirect(self.get_success_url(), {'message_disp': message})
 
@@ -242,7 +283,8 @@ class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
         If the formset is invalid, re-render the context data with the
         data-filled formset and errors.
         """
-        message = messages.error(self.request, "Error: please check your picks")
+        message = messages.error(self.request, "Error: Please enter a complete scoreline in the highlighted fields")
+        print(self.request)
         return self.render_to_response(self.get_context_data(formset=formset))
 
     def get_context_data(self, **kwargs):
@@ -252,13 +294,20 @@ class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
         context['game'] = game
         matches = game.get_matches()
         context['matches'] = matches
+        league = League.objects.get(pk=self.kwargs.get("league_id"))
         players = game.get_players()
         # TODO: fix players object to show only players who have submitted predictions
         context['players'] = players
-        context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
+        context['league'] = league
         context['view'] = "predict"
         context['title'] = "Submit Predictions"
         context['matches_avail'] = matches.filter(ko_date__gte=datetime.now())
+        context['matches_unavail'] = matches.filter(ko_date__lte=datetime.now())
+        context['member_list'] = League.objects.get_members_leagues(self.request.user)
+        context['player_is_member'] = game.player_is_member(self.request.user.player, league.id)
+        # context['predictions'] = Prediction.objects.filter(player=self.request.user.player, game=game, replaced=False)
+        context['predictions'] = game.get_player_predictions(self.request.user.player)
+        context['joker'] = game.get_player_predictions(self.request.user.player).filter(joker=True)
         """for match in matches:
             initial_data.append({'match': match})
         if self.request.POST:
@@ -268,70 +317,9 @@ class PredictMatches(LoginRequiredMixin, SuccessMessageMixin, ModelFormSetView):
         return context
 
 
-"""class PredictMatches(CreateView):
-
-    # TODO: allow user to reflect predictions across all leagues
-    model = Prediction
-    template_name = "games/_predictions.html"
-    fields = ['game', 'player', 'match', 'home_score', 'away_score', 'joker']
-    #form_class = PredictionForm
-
-    #TODO: tidy up html layout
-    # TODO: figure out how to add read only fields and prepopulate them
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        game = Game.objects.get(pk=self.kwargs.get("game_id"))
-        context['game'] = game
-        matches = game.get_matches()
-        context['matches'] = matches
-        initial_data = []
-        for match in matches:
-            initial_data.append({'match': match})
-        if self.request.POST:
-            prediction_formset = PredictionFormSet(self.request.POST, queryset=matches)
-            context['prediction_form'] = prediction_formset
-            if prediction_formset.is_valid():
-                context['prediction_form'] = prediction_formset
-                # Note - we are passing the education_formset to form_valid. If you had more formsets
-                # you would pass these as well.
-                return self.form_valid(prediction_formset)
-        else:
-            context['prediction_form'] = PredictionFormSet(queryset=matches)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        game = Game.objects.get(pk=self.kwargs.get("game_id"))
-        matches = game.get_matches()
-        form = self.get_form()
-        # Add as many formsets here as you want
-        prediction_form = PredictionFormSet(request.POST)
-        # Now validate both the form and any formsets
-        if form.is_valid() and prediction_form.is_valid():
-            # Note - we are passing the education_formset to form_valid. If you had more formsets
-            # you would pass these as well.
-            return self.form_valid(form, prediction_form)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form, prediction_form):
-        predictions = prediction_form.save(commit=False)
-        for prediction in predictions:
-            prediction.instance = self.object
-            prediction.player = Player.objects.get(user=self.request.user)  # use your own profile here
-            prediction.game = Game.objects.get(pk=self.kwargs.get("game_id"))
-            # prediction.match = Match.objects.get(pk=self.kwargs.get("match_id"))
-            prediction.save()
-        #prediction = form.save(commit=False)
-
-        #prediction.save()
-        return HttpResponseRedirect(self.get_success_url())"""
-
-
 class HomeView(TemplateView):
     # TODO: fix top_menu.html to match the desktop site
     template_name = 'games/pages/home.html'
-
 
 class RulesView(TemplateView):
     template_name = 'games/pages/rules.html'
@@ -341,13 +329,22 @@ class PlayerView(DetailView):
     template_name = 'games/pages/player_profile.html'
     model = Player
 
+
 class ContactView(TemplateView):
     template_name = 'games/pages/contact.html'
 
 
-class ViewPredictions(UpdateView):
-    model = Prediction
-    template_name = "games/game_predict_detail.html"
+class ViewPredictions(GameDetail):
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        predictions = self.object.get_player_predictions(self.kwargs.get("player_id"))
+        context['predictions'] = predictions
+        context['view'] = "points"
+        context['title'] = "Game Performance"
+        context['player'] = get_object_or_404(Player, pk=self.kwargs.get("player_id"))
+        context['total_points'] = self.object.get_player_points(self.kwargs.get("player_id"))
+        return context
 
 
 class CreateGame(CreateView):
@@ -355,76 +352,7 @@ class CreateGame(CreateView):
     template_name = "games/game_create.html"
     fields = ['name', 'start_date', 'end_date', 'entry_fee', 'rules', 'matches', 'public_game', ]
 
+
 class EditGame(UpdateView):
     model = Game
     template_name = "games/game_edit.html"
-
-# superceded by GCBV
-"""def league_detail(request, league_id):
-    # TODO: check if private
-    now = datetime.now()
-    current_player = request.user.player.id
-    league = get_object_or_404(League, pk=league_id)
-    is_owner = league.owned_by.id == current_player
-    is_member = league.is_member(current_player)
-    #if league.member_can_add and league.objects.filter(members__in=[Player.current_player]):
-    if league.member_can_add and is_member:
-        member_can_add = True
-    else:
-        member_can_add = False
-    if is_owner or member_can_add:
-        show_add_game = True
-    else:
-        show_add_game = False
-    #latest_game_list = Game.objects.filter(start_date__gte=now, included_in_league=league_id).order_by('start_date')
-    #previous_game_list = Game.objects.filter(end_date__lte=now, included_in_league=league_id).order_by('start_date')
-    #live_game_list = Game.objects.filter(start_date__lte=now, end_date__gte=now, included_in_league=league_id).order_by('start_date')
-    context = {#'latest_game_list': latest_game_list,
-               #'previous_game_list': previous_game_list,
-               #'live_game_list': live_game_list,
-               'league': league,
-               "show_add_game": show_add_game,
-               "is_member": is_member,
-               }
-    return render(request, 'games/league_detail.html', context)
-"""
-# superceded by GCBV
-"""def index(request):
-
-    current_player = request.user.player.id
-    leagues_join_list = League.objects.filter(
-        is_private=False, accepts_members=True).exclude(
-        members__in=[current_player], owned_by=current_player).order_by('name')[:4]
-    leagues_member_list = League.objects.filter(
-        members__in=[current_player]).exclude(
-        owned_by=current_player).order_by('name')[:4]
-    leagues_owner_list = League.objects.filter(owned_by=current_player).order_by('name')[:4]
-    context = {'leagues_join_list': leagues_join_list,
-               'leagues_member_list': leagues_member_list,
-               'leagues_owner_list': leagues_owner_list
-               }
-    return render(request, 'games/leagues_list.html', context)
-"""
-
-"""def games_index(request):
-    now = datetime.now()
-    latest_game_list = Game.objects.filter(start_date__gte=now, included_in_league=league_id).order_by('start_date')
-    previous_game_list = Game.objects.filter(end_date__lte=now, included_in_league=league_id).order_by('start_date')
-    live_game_list = Game.objects.filter(start_date__lte=now, end_date__gte=now, included_in_league=league_id).order_by('start_date')
-    context = {'latest_game_list': latest_game_list, 
-               'previous_game_list': previous_game_list,
-               'live_game_list': live_game_list,
-               'now': now
-               }
-    return render(request, 'games/_games_index.html', context)"""
-
-"""def game_detail(request, game_id, league_id):
-    game = get_object_or_404(Game, pk=game_id)
-    players = game.get_players(league_id)
-    leaderboard = Prediction.objects.get_leaderboard(game_id)
-    return render(request, 'games/game_detail.html', {'game': game, 'players': players, 'leaderboard': leaderboard})"""
-
-"""def predict(request, game_id):
-    game = get_object_or_404(Game, pk=game_id)
-    return render(request, 'games/_predictions.html', {'game': game})
-"""

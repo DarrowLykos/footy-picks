@@ -8,16 +8,24 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 left-blog-pad">
+                {% include 'games/partials/messages.html' %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 left-blog-pad">
                 <div class="schedule-text bg-light">
-                    <h3 class="st-title">{{ league.name }}</h3>
+                    <a href="{% url 'picks_pages:league_detail' league_id=league.id %}"><h3 class="st-title">{{
+                        league.name }}</h3></a>
                     {% if league != game %}
-                    <h4 class="st-title">{{ game.name }}</h4>
+                    <a href="{% url 'picks_pages:game_detail' league_id=league.id game_id=game.id %}"><h4
+                            class="st-title">{{ game.name }}</h4></a>
                     {% endif %}
                 </div>
-                {% if game.is_upcoming and view != "predict" and view != 'league' and user.is_authenticated %}
+                {% if game.is_upcoming and view != "predict" and view != 'league' and view != 'points' and
+                user.is_authenticated %}
                 <a class="btn primary-btn mb-3"
                    href="{% url 'picks_pages:predict_game' league_id=league.id game_id=game.id %}">Enter Predictions</a>
-                {% elif game.is_upcoming and view != "predict" and view != 'league' %}
+                {% elif game.is_upcoming and view != "predict" and view != 'league' and view != 'points' %}
                 <p><a href="{% url 'login' %}">Log in</a> to enter your predictions</p>
                 {% endif %}
             </div>
@@ -27,14 +35,20 @@
                 <div class="schedule-text bg-light p-1">
                     {% if view == "predict" %}
                     {% include "games/partials/predictions_form.html" with matches=matches game=game %}
-                    {% elif view == "result" %}
+                    {% elif view == "result" or view == "points" %}
                     {% include "games/partials/fixtures.html" with matches=matches game=game %}
                     {% elif view == "league" %}
                     {% include "games/partials/leaderboard_full.html" with players=players %}
                     {% endif %}
                 </div>
             </div>
-
+            {% if view == "points" %}
+            <div class="col-lg-3 left-blog-pad">
+                <div class="schedule-text bg-light p-1">
+                    {% include "games/partials/player_points.html" with player=player %}
+                </div>
+            </div>
+            {% else %}
             <div class="col-lg-3">
                 <div class="schedule-sidebar bg-light p-1">
                     {% if view == "predict" %}
@@ -46,11 +60,13 @@
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
             <div class="col-lg-2">
                 <div class="schedule-sidebar bg-light p-1">
                     {% include "games/partials/game_info.html" with game=game %}
                 </div>
             </div>
+
         </div>
     </div>
 </section>

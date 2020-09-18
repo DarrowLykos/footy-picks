@@ -1,13 +1,14 @@
 {% load static %}
 {% block content %}
+{% if matches_unavail %}
 <div class="ss-widget">
     <div class="section-title sidebar-title">
-        <h5>Fixtures</h5>
+        <h5>Your Locked Predictions <i class="fas fa-lock"></i></h5>
     </div>
     <div class="st-table">
-        <h4 class="form-group">
+        <div class="form-group">
             <table>
-                {% for match in matches %}
+                {% for match in matches_unavail %}
                 <tbody>
                 <td class="left-team-img">
                     <img src="{{ match.home_team.thumbnail.url }}">
@@ -24,10 +25,24 @@
                     <div class="so-text">
                         {{ match.competition }}
                     </div>
-                    <h4>{{ match.final_score }}</h4>
-                    <div class="so-text"><i class="fas fa-futbol fa-fw" aria-hidden="true"></i>{{
-                        match.ko_date|date:"G:i" }}<br>{{ match.ko_date|date:"jS M Y" }}
+                    <div class="row">
+                        {% if match in matches_unavail %}
+                        <!--<div class="col-5 align-self-center versus"><h4>{{ match.home_score }}</h4></div>-->
+                        {% for pred in predictions %}
+                        {% if pred.match == match %}
+                        <div class="col-5 align-middle home"><h4>{{ pred.home_score }}</h4></div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="col align-self-center versus"><i class="fas fa-lock"></i></div>
+                        {% for pred in predictions %}
+                        {% if pred.match == match %}
+                        <!-- <div class="col-5 align-self-center versus"><h4>{{ match.away_score }}</h4></div>-->
+                        <div class="col-5 align-middle away"><h4>{{ pred.away_score }}</h4></div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
                     </div>
+                    <div class="so-text">{{ match.ko_date }}</div>
                 </td>
                 <td class="right-team">
                     <div id="content-desktop">
@@ -40,11 +55,13 @@
                 <td class="right-team-img">
                     <img src="{{ match.away_team.thumbnail.url }}">
                 </td>
-
                 {% endfor %}
                 </tr>
+
                 </tbody>
             </table>
+        </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

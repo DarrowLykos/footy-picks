@@ -6,29 +6,35 @@
         <h5>Leaderboard</h5></div>
     <table class="table table-sm">
         <thead>
-        <th>Pos</th>
-        <th>Player</th>
-        <th>Played</th>
-        <!--<th>Average</th>
-        <th>High</th>
-        <th>Low</th>-->
-        <th>Points</th>
+        <tr>
+            <th>Pos</th>
+            <th>Player</th>
+            <th>Played</th>
+            <!--<th>Average</th>
+            <th>High</th>
+            <th>Low</th>-->
+            <th>Points</th>
+        </tr>
         </thead>
         {% for player in leaderboard %}
         <tr>
             <td>
                 {% if forloop.first %}
-                <i class="fas fa-trophy"></i>
+                <i class="fas fa-trophy gold"></i>
                 {% else %}
                 {{ forloop.counter|ordinal }}
                 {% endif %}
             </td>
             <td>
                 {% if user.username == player.name %}
-                <abbr title="You"><i class="fas fa-user red"></i></abbr>
+                <!--<a class="text-body red" href="{% url 'picks_pages:player_profile' pk=player.player %}"> -->
+                <abbr title="You">{{ player.name }}</abbr></a>
+                <!--</a>-->
+                {% else %}
+                <!--<a class="text-body" href="{% url 'picks_pages:player_profile' pk=player.player %}"> -->
+                {{ player.name }}
+                <!-- </a> -->
                 {% endif %}
-                <a class="text-body" href="{% url 'picks_pages:player_profile' pk=player.player %}">{{ player.name
-                    }}</a>
             </td>
             <td>{{ player.total_games }}</td>
             <!--<td>{{ player.average_points|floatformat:2 }}</td>

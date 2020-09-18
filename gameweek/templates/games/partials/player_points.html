@@ -1,0 +1,45 @@
+{% load static %}
+{% block content %}
+<div class="ss-widget">
+    <div class="section-title sidebar-title">
+        <h5>{{ player }}'s Picks</h5>
+    </div>
+    <div class="st-table">
+        <div class="form-group">
+            <table>
+                {% for match in matches %}
+                <tbody>
+                <tr>
+                    {% for pred in predictions %}
+                    {% if pred.match == match %}
+                    <td class="st-option">
+                        <div class="row">
+                            <div class="col-2"><img style="max-width: 20px" src="{{ match.home_team.thumbnail.url }}">
+                            </div>
+                            <div class="col-8 align-middle"><h5>{{ match.short_name }}</h5></div>
+                            <div class="col-2"><img style="max-width: 20px" src="{{ match.away_team.thumbnail.url }}">
+                            </div>
+                        </div>
+                        <h4>{{ pred.predicted_score }}
+                            {% if pred.joker %}
+                            <abbr title="Joker"><i class="fas fa-angle-double-up"></i></abbr>
+                            {% endif %}
+                        </h4>
+                        <h5>{{ pred.points }}pts</h5>
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                </tr>
+
+                <tr class="points-total schedule-text">
+                    <td class="st-title">
+                        {{ total_points }}pts
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

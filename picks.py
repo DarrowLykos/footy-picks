@@ -12,7 +12,11 @@ def calculate_score(predicted_score, actual_score, joker, rule_set):
 
         def get_result(score):
             score = score.split("-")
-            score = int(score[0]) - int(score[1])
+            try:
+                score = int(score[0]) - int(score[1])
+            except:
+                score = 0
+
             if score == 0:
                 return "D"
             elif score < 0:
