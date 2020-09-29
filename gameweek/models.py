@@ -13,6 +13,7 @@ from django.db.models import F
 # from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MinValueValidator
+import praw
 
 now = timezone.now()
 
@@ -22,7 +23,7 @@ def randomised_password():
     return rand_pword
 
 class Game(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=12)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     matches = models.ManyToManyField(Match, blank=True, related_name="games", related_query_name="game")
@@ -147,18 +148,16 @@ class Game(models.Model):
         return player_predictions
 
     def update_player_points(self):
-        preds = self.get_predictions()
+        rules = self.rules()
+        preds = self.get_predictions().prefetch_related('match').exclude(final=True, replaced=True)
         for pred in preds:
-            pred.points = pred.get_points()
-            pred.save()
-        self.last_update = datetime.now()
-        self.save()
+            pred.get_points(rules)
 
     def get_player_points(self, player_id):
-        predictions = self.get_predictions().filter(player_id=player_id)
-        print(predictions)
+        predictions = self.get_predictions().filter(player_id=player_id).prefetch_related('match')
+        # print(predictions)
         points = predictions.values('player').annotate(total_points=Sum('points'))
-        print(points)
+        # print(points)
         try:
             points = points[0]['total_points']
             return points
@@ -171,7 +170,23 @@ class Game(models.Model):
         else:
             return False
 
-    # TODO: output leaderboard of aggregated scores
+    def populate_matches(self, start_date=None, end_date=None, max_matches=10, competition=None, **kwargs):
+        if start_date == None:
+            start_date = self.start_date
+        if end_date == None:
+            end_date = self.end_date
+        matches = Match.objects.filter(ko_date__gte=start_date, ko_date__lte=end_date).order_by('?')
+        existing_matches = self.matches.all()
+        counter = existing_matches.count()
+        for match in matches:
+            if not match in existing_matches and counter < max_matches:
+                if competition == None or match.competition == competition:
+                    self.matches.add(match)
+                    counter += 1
+
+    def get_reddit_predictions(self, comments_id):
+        get_reddit_predictions(comments_id, self.id)
+
     def leaderboard(self, filter_top=False):
         lb = self.predictions.filter(game_id=self.id).values('player').annotate(total_points=Sum('points')).order_by(
             '-points')
@@ -318,18 +333,20 @@ class Prediction(models.Model):
     home_score = models.PositiveIntegerField(validators=[MinValueValidator(0)])
     away_score = models.PositiveIntegerField(validators=[MinValueValidator(0)])
     joker = models.BooleanField(default=False)
-    submit_date_time = models.DateTimeField(auto_now=True)
+    submit_date_time = models.DateTimeField(auto_now_add=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="predictions",
                              related_query_name="prediction")
     points = models.IntegerField(default=0, null=True, blank=True)
     objects = PredictionManager()
     replaced = models.BooleanField(default=False)
+    valid_override = models.BooleanField(default=False)
+    final = models.BooleanField(default=False)
 
     def __str__(self):
         return self.player.user.get_full_name() + "|" + str(self.match) + "|" + self.predicted_score()
 
     def valid(self):
-        if not self.replaced and (self.submit_date_time <= self.match.ko_date):
+        if not self.replaced and (self.submit_date_time <= self.match.ko_date or self.valid_override):
             return True
         else:
             return False
@@ -337,16 +354,20 @@ class Prediction(models.Model):
     def rules(self):
         return self.game.rules()
 
-    def get_points(self):
-        if self.actual_score() == "-":
+    def get_points(self, rules, force_update=False):
+        if self.final and not force_update:
+            return self.points
+        elif self.actual_score() == "-" or self.replaced:
             return 0
         else:
             points = calculate_score(predicted_score=self.predicted_score(),
                                      actual_score=self.actual_score(),
                                      joker=self.joker,
-                                     rule_set=self.rules().__dict__
+                                     rule_set=rules.__dict__
                                      )
-
+            if self.match_finished():
+                self.final = True
+                self.save()
             if self.valid():
                 self.points = points
                 self.save()
@@ -360,8 +381,11 @@ class Prediction(models.Model):
     def actual_score(self):
         return self.match.final_score()
 
-
-
+    def match_finished(self):
+        if self.match.status == "Match Finished":
+            return True
+        else:
+            return False
 
     """def aggregated_game_points(game_id):
         return Prediction.objects.filter(game_id=game_id).values('player').annotate(total_points=Sum('points'))"""

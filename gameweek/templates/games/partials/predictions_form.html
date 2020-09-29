@@ -12,6 +12,7 @@
             <div class="form-group">
                 <table>
                     {{ formset.management_form }}
+                    {% if matches_avail %}
                     {% for form in formset %}
                     {% for match in matches_avail %}
                     {% if forloop.parentloop.counter0 == forloop.counter0 %}
@@ -75,8 +76,10 @@
                     {% endif %}
                     {% endfor %}
                     {% endfor %}
+                    {% else %}
+                    No available predictions
+                    {% endif %}
                     </tr>
-
                     </tbody>
                 </table>
             </div>

@@ -1428,8 +1428,8 @@ ol {
 -----------------------*/
 
 .schedule-section {
-	padding-top: 70px;
-	padding-bottom: 70px;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 .schedule-text .st-title {
@@ -1628,7 +1628,7 @@ ol {
 }
 
 .schedule-sidebar .ss-league .sl-item span {
-	font-size: 14px;
+	font-size: 13px;
 	color: #2d2d2d;
 	font-weight: 500;
 	overflow: hidden;
@@ -1637,7 +1637,7 @@ ol {
 }
 
 .schedule-sidebar .ss-league table {
-	font-size: 14px;
+	font-size: 13px;
 	color: #2d2d2d;
 	font-weight: 500;
 	overflow: hidden;
@@ -2801,6 +2801,14 @@ i.gold {
     color: gold;
 }
 
+i.silver {
+    color: silver;
+}
+
+i.bronze {
+    color: #CD7F32;
+}
+
 i.blue {
     color: blue;
 }
@@ -2840,6 +2848,22 @@ i.blue {
 a .title {
 
 }
+
+.pagination li a.page-link {
+    color: black !important;
+}
+
+.pagination li.active span {
+  background-color: #dd1515 !important;
+  border-color: #dd1515 !important;
+  font-weight: bold;
+}
+
+table tbody tr td a.game-link {
+    color: #dd1515;
+
+}
+
 #content-desktop {display: block;}
 #content-mobile {display: none;}
 

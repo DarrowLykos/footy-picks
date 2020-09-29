@@ -4,10 +4,7 @@
 <table class="table table-sm">
     {% for league in leagues_list %}
     <tr>
-        <td>{{ league.name }}</td>
-        <td class="text-right"><a href="{% url 'picks_pages:league_detail' league.id %}"><i
-                class="fas fa-arrow-right"></i></a>
-        </td>
+        <td><a class="game-link" href="{% url 'picks_pages:league_detail' league.id %}">{{ league.name }}</a></td>
     </tr>
     {% endfor %}
 </table>

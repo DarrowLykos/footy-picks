@@ -19,9 +19,9 @@
             {% endif %}
             {{ game.status|title }}
             {% if game.is_upcoming and view != "predict" %}
-            {{ game.start_date|naturaltime }}
+            <br>{{ game.start_date|naturaltime }}
             {% elif game.is_upcoming %}
-            {{ game.start_date|naturaltime }}
+            <br>{{ game.start_date|naturaltime }}
             {% endif %}
         </span>
     </div>
@@ -88,7 +88,7 @@ Joker Multiplier: Points multiplier on your Joker
                 {% if key != "joker multiplier" %}
                 {{ value }}pts
                 {% else %}
-                X{{ value }}
+                <i class="red fas fa-angle-double-up fa-fw"></i>X{{ value }}
                 {% endif %}
             </div>
         </td>

@@ -1,0 +1,13 @@
+<!-- <div class="col-lg-5 left-blog-pad bg-light"> -->
+
+{% if games_list %}
+<table class="table table-sm">
+    {% for game in games_list %}
+    <tr>
+        <td><a class="game-link" href="{% url 'picks_pages:game_detail' game.id %}">{{ game.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No games.</p>
+{% endif %}

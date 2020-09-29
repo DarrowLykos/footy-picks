@@ -14,12 +14,16 @@
 
                 {% if forloop.first %}
                 <i class="fas fa-trophy gold"></i>
+                {% elif forloop.counter == 2 %}
+                <i class="fas fa-trophy silver"></i>
+                {% elif forloop.counter == 3 %}
+                <i class="fas fa-trophy bronze"></i>
                 {% else %}
                 {{ forloop.counter|ordinal }}
                 {% endif %}
             </td>
             <td>
-                <a class="text-body"
+                <a class="game-link"
                    href="{% url 'picks_pages:view_predictions' league_id=league.id game_id=game.id player_id=player.player %}">
                     {% if user.username == player.name %}
                     <abbr title="You">{{ player.name }}</abbr></a>

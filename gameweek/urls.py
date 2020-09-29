@@ -31,6 +31,8 @@ league_patterns = [
     # ex: /leagues/2/
     # path('<int:league_id>/', views.LeagueDetail.as_view(),  name='league_detail'),
     path('leagues/<int:league_id>/', views.GameList.as_view(), name='league_detail'),
+    # path('<int:league_id>/', views.LeagueDetail.as_view(),  name='league_detail'),
+    path('leagues/<int:league_id>/game/', views.GameList.as_view(), name='games_list'),
     # ex: /leagues/2/1
     path('leagues/<int:league_id>/game/<int:game_id>/', include(game_patterns)),
     # ex: leagues/2/games/create

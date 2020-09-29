@@ -1,6 +1,7 @@
 {% load static %}
 {% block content %}
 {% load humanize %}
+{% load bootstrap_pagination %}
 
 <div class="ss-widget">
     <div class="section-title sidebar-title">
@@ -8,7 +9,7 @@
     </div>
     {% if not league_is_private or is_member %}
     <table class="table table-sm">
-        {% if league.games.all %}
+        {% if game_list %}
         <thead>
         <th></th>
         <th>Name</th>
@@ -16,7 +17,7 @@
         <th class="text-right"></th>
         </thead>
         <tr>
-            {% for game in league.games.all %}
+            {% for game in game_list %}
             <td>
                 {% if game.is_live %}
                 <i class="fas fa-play-circle green"></i>
@@ -27,13 +28,10 @@
                 {% endif %}
             </td>
             <td>
-                {{ game.name }}
+                <a class="game-link" href="{% url 'picks_pages:game_detail' league_id=league.id game_id=game.id %}">{{
+                    game.name }}</a>
             </td>
             <td>{{ game.start_date|date:"jS M Y" }}</td>
-            <td>
-                <a href="{% url 'picks_pages:game_detail' league_id=league.id game_id=game.id %}"><i
-                        class="fas fa-arrow-right"></i></a>
-            </td>
         </tr>
         {% endfor %}
         {% else %}
@@ -53,6 +51,9 @@
             <td>Finished</td>
         </tr>
     </table>
+</div>
+<div>
+    {% bootstrap_paginate page_obj range=5 extra_pagination_classes="pagination-sm justify-content-center" %}
     {% endif %}
 </div>
 {% endblock %}

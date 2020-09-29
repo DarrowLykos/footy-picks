@@ -25,9 +25,22 @@
                         {{ match.competition }}
                     </div>
                     <h4>{{ match.final_score }}</h4>
-                    <div class="so-text"><i class="fas fa-futbol fa-fw" aria-hidden="true"></i>{{
-                        match.ko_date|date:"G:i" }}<br>{{ match.ko_date|date:"jS M Y" }}
-                    </div>
+                    {% if match.status == "Not Started" %}
+                    <div class="so-text"><i class="fas fa-clock fa-fw" aria-hidden="true"></i>
+                        {% elif match.status == "Match Finished" or match.status == "Match Postponed" %}
+                        <div class="so-text"><i class="fas fa-flag-checkered fa-fw" aria-hidden="true"></i>
+                            {% else %}
+                            <div class="so-text"><i class="fas fa-futbol fa-fw fa-spin" aria-hidden="true"></i>
+                                {% endif %}
+                                {{ match.ko_date|date:"G:i" }}<br>
+                                <div id="content-desktop">
+                                    {{ match.ko_date|date:"jS M Y" }}
+                                </div>
+                                <div id="content-mobile">
+                                    {{ match.ko_date|date:"d/m/y" }}
+                                </div>
+
+                            </div>
                 </td>
                 <td class="right-team">
                     <div id="content-desktop">

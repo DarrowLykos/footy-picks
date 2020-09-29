@@ -11,6 +11,7 @@
                 <tbody>
                 <tr>
                     {% for pred in predictions %}
+
                     {% if pred.match == match %}
                     <td class="st-option">
                         <div class="row">
@@ -27,6 +28,7 @@
                         </h4>
                         <h5>{{ pred.points }}pts</h5>
                     </td>
+
                     {% endif %}
                     {% endfor %}
                     {% endfor %}

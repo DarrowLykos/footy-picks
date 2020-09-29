@@ -28,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com', '192.168.1.115']
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Application definition
 
@@ -50,7 +53,8 @@ INSTALLED_APPS = [
     'django_static_fontawesome',
     'debug_toolbar',
     'django_tables2',
-
+    'bootstrap_pagination',
+    'gsheets',
 ]
 
 LOGIN_REDIRECT_URL = '/'
@@ -156,4 +160,8 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
+}
+
+GSHEETS = {
+    'CLIENT_SECRETS': 'footypicks/credentials/'
 }

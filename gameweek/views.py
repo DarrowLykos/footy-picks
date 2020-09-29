@@ -13,7 +13,7 @@ from django.urls import path, re_path, include, reverse_lazy
 from django.contrib import messages
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # TODO: split leagues HTML and views DRY
 
@@ -68,8 +68,9 @@ class LeagueDetail(DetailView):
         context['show_add_game'] = show_add_game
         context['is_member'] = is_member
         leaderboard = Prediction.objects.get_leaderboard(league_id=self.object.id)
-        context['leaderboard'] = leaderboard
+        context['leaderboard'] = Paginator(leaderboard, 25).page(1)
         context['member_list'] = League.objects.get_members_leagues(self.request.user)
+        # context['game_list'] = Paginator(self.games.all(), 4)
         if self.object.is_aggregate:
             context['aggregate_game'] = self.object.get_aggregate_game().id
 
@@ -79,9 +80,18 @@ class LeagueDetail(DetailView):
 class GameList(ListView):
     model = Game
     template_name = 'games/pages/game_detail.html'
+    context_object_name = "game_list"
+    # queryset = model.objects.all()
+    paginate_by = 4
 
-    def get_object(self, queryset=None):
-        queryset = get_list_or_404(self.model.objects.filter(included_in_league=self.kwargs.get("league_id")))
+    '''def get_object(self, queryset=None):
+        #queryset = get_list_or_404(self.model.objects.filter(included_in_league=self.kwargs.get("league_id")))
+        #queryset = get_list_or_404(League.objects.get(pk=self.kwargs.get("league_id")).games.all())
+        queryset = Game.objects.filter(pk<4)
+        return queryset'''
+
+    def get_queryset(self):
+        queryset = get_list_or_404(League.objects.get(pk=self.kwargs.get("league_id")).games.all())
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -101,6 +111,7 @@ class GameList(ListView):
         context['game'] = league
         context['title'] = "League Table"
         context['view'] = 'league'
+        #context['game_list'] = Paginator(league.games.all(), 2).page(1)
         context['member_list'] = League.objects.get_members_leagues(self.request.user)
         # context['live_games'] = league.games.filter(is_live=True)
         return context
@@ -127,11 +138,14 @@ class GameDetail(DetailView):
         context['players'] = players
         context['leaderboard'] = leaderboard
         context['game'] = self.object
+        context['subtitle'] = self.object.name
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
         context['title'] = "Fixtures & Results"
         context['view'] = 'result'
         context['member_list'] = League.objects.get_members_leagues(self.request.user)
         matches = self.object.get_matches()
+        for match in matches:
+            match.get_scoreline()
         context['matches'] = matches
         return context
 

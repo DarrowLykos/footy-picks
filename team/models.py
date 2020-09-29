@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import datetime, timedelta
 import requests
-import time
+import dateutil.parser
 
 # Create your models here.
 COUNTRY_CHOICES = (
@@ -34,6 +34,44 @@ class Competition(models.Model):
     def __str__(self):
         return self.name
 
+    def create_matches(self, round_id, season):
+        url = f"https://www.thesportsdb.com/api/v1/json/1/eventsround.php?id={self.api_id}&r={round_id}&s={season}"
+        r = requests.get(url).json()
+        for event in r['events']:
+            print(event)
+            home_team_id = event['idHomeTeam']
+            away_team_id = event['idAwayTeam']
+            # ko_date = event['strTimestamp']
+            ko_t = event['strTime']
+            ko_d = event['dateEvent']
+            ko_date = datetime.strptime(f"{ko_d} {ko_t}", "%Y-%m-%d %H:%M:%S")
+            comp_id = event['idLeague']
+            match_api_id = event['idEvent']
+            try:
+                home_team = Team.objects.get(api_id=home_team_id)
+            except:
+                print('Creating home team')
+                home_team = Team(name=event['strHomeTeam'], short_name=event['strHomeTeam'][:3].upper(),
+                                 api_id=home_team_id, country=event['strCountry'])
+                home_team.save()
+                home_team.competitions.add(self)
+                home_team = Team.objects.get(api_id=home_team_id)
+            try:
+                away_team = Team.objects.get(api_id=away_team_id)
+            except:
+                print('Creating away team')
+                away_team = Team(name=event['strAwayTeam'], short_name=event['strAwayTeam'][:3].upper(),
+                                 api_id=away_team_id,
+                                 country=event['strCountry'])
+                away_team.save()
+                away_team.competitions.add(self)
+                away_team = Team.objects.get(api_id=away_team_id)
+            comp = self
+            if Match.objects.filter(api_id=match_api_id).count() == 0:
+                print('Creating match')
+                match = Match(home_team=home_team, away_team=away_team, ko_date=ko_date, competition=comp,
+                              api_id=match_api_id, last_api=datetime.now())
+                match.save()
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
@@ -75,6 +113,9 @@ class Match(models.Model):
     api_id = models.IntegerField(null=True)
     last_api = models.DateTimeField()
 
+    class Meta:
+        ordering = ('-ko_date',)
+
     # TODO: something wrong with timezone
     def name(self):
         return self.home_team.name + " vs " + self.away_team.name
@@ -90,7 +131,9 @@ class Match(models.Model):
         verbose_name_plural = "Matches"
 
     def final_score(self):
-        if self.status != "Match Finished":
+        if self.status == "Match Postponed":
+            return "Postponed"
+        elif self.status != "Match Finished":
             return "-"
         else:
             return str(self.home_score) + "-" + str(self.away_score)
@@ -128,17 +171,30 @@ class Match(models.Model):
     def matchday(self):
         return self.ko_date.strftime('%d %b %Y')
 
-    def get_scoreline(self):
+    def get_scoreline(self, force_update=False):
         api_url = "https://www.thesportsdb.com/api/v1/json/1/lookupevent.php?id=" + str(self.api_id)
-        if self.status != "Match Finished" and self.last_api < (datetime.now() - timedelta(minutes=1)):
+        try:
+            ko_date = datetime.now(self.ko_date)
+        except:
+            ko_date = self.ko_date
+        match_status = self.status != "Match Finished" and self.status != "Match Postponed" and ko_date < datetime.now()
+
+        if (match_status and self.last_api < (datetime.now() - timedelta(minutes=15))) or force_update:
             r = requests.get(api_url)
+            self.last_api = datetime.now()
+            self.save()
             if r:
-                self.last_api = datetime.now()
                 result_dict = r.json()['events'][0]
                 home_score = result_dict['intHomeScore']
                 away_score = result_dict['intAwayScore']
+                postponed = result_dict['strPostponed']
                 status = result_dict['strStatus']
-                if status == 'Match Finished':
+                if status == 'Match Postponed':
+                    print("Match Postponed")
+                    self.status = status
+                    self.Postponed = postponed
+                    self.save()
+                elif status == 'Match Finished':
                     self.home_score = home_score
                     self.away_score = away_score
                     self.status = status

@@ -50,10 +50,10 @@ def calculate_score(predicted_score, actual_score, joker, rule_set):
            * (rule_set["joker_multiplier"] if joker else 1)
 
 
-def calculate_gameweek_scores(gw_id):
+def calculate_gameweek_scores(gw_id, rules):
     preds = Prediction.objects.filter(game=gw_id)
     for pred in preds:
-        pred.points = pred.get_points()
+        pred.points = pred.get_points(rules)
         pred.save()
 
 
