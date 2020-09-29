@@ -16,15 +16,18 @@ from django.contrib.messages import constants as messages
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ollz0o2i&)@ta*j@=+9=)bfpf(fr&8_a&$@ea##%)5-^_=jejs'
+# SECRET_KEY = 'ollz0o2i&)@ta*j@=+9=)bfpf(fr&8_a&$@ea##%)5-^_=jejs'
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'ollz0o2i&)@ta*j@=+9=)bfpf(fr&8_a&$@ea##%)5-^_=jejs')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com', '192.168.1.115']
 
