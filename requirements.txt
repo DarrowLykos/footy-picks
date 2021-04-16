@@ -28,7 +28,7 @@ daphne==2.5.0
 Django==3.0.7
 django-bootstrap-pagination==1.7.1
 django-crispy-forms==1.9.2
-django-debug-toolbar==2.2
+django-debug-toolbar==2.2.1
 django-extensions==2.2.9
 django-extra-views==0.13.0
 django-gsheets==0.0.10
