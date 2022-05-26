@@ -18,7 +18,9 @@
                     {% if forloop.parentloop.counter0 == forloop.counter0 %}
                     <tbody>
                     <td class="left-team-img">
+                        {% if match.home_team.thumbnail %}
                         <img src="{{ match.home_team.thumbnail.url }}">
+                        {% endif %}
                     </td>
                     <td class="left-team">
                         <div id="content-desktop">
@@ -71,7 +73,9 @@
                         </div>
                     </td>
                     <td class="right-team-img">
+                        {% if match.away_team.thumbnail %}
                         <img src="{{ match.away_team.thumbnail.url }}">
+                        {% endif %}
                     </td>
                     {% endif %}
                     {% endfor %}

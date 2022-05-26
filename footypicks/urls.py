@@ -34,7 +34,7 @@ urlpatterns = [
 
 urlpatterns += [
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('gsheets.urls')),
+    # path('', include('gsheets.urls')),
 ]
 
 if settings.DEBUG:

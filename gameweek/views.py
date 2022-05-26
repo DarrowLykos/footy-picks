@@ -76,14 +76,13 @@ class LeagueDetail(DetailView):
 
         return context
 
-
 class GameList(ListView):
     model = Game
     template_name = 'games/pages/game_detail.html'
     context_object_name = "game_list"
     # queryset = model.objects.all()
     paginate_by = 4
-
+    # paginate_by = 25
     '''def get_object(self, queryset=None):
         #queryset = get_list_or_404(self.model.objects.filter(included_in_league=self.kwargs.get("league_id")))
         #queryset = get_list_or_404(League.objects.get(pk=self.kwargs.get("league_id")).games.all())
@@ -106,13 +105,14 @@ class GameList(ListView):
         players = league.get_players()
         leaderboard = Prediction.objects.get_leaderboard(league_id=league.id)
         context['players'] = players
-        context['leaderboard'] = leaderboard
+        context['leaderboard'] = Paginator(leaderboard, 25).page(1)
         context['league'] = league
         context['game'] = league
         context['title'] = "League Table"
         context['view'] = 'league'
-        #context['game_list'] = Paginator(league.games.all(), 2).page(1)
-        context['member_list'] = League.objects.get_members_leagues(self.request.user)
+        # context['game_list'] = Paginator(league.games.all(), 2).page(1)
+        if self.request.user.is_authenticated:
+            context['member_list'] = League.objects.get_members_leagues(self.request.user)
         # context['live_games'] = league.games.filter(is_live=True)
         return context
 
@@ -142,7 +142,8 @@ class GameDetail(DetailView):
         context['league'] = League.objects.get(pk=self.kwargs.get("league_id"))
         context['title'] = "Fixtures & Results"
         context['view'] = 'result'
-        context['member_list'] = League.objects.get_members_leagues(self.request.user)
+        if self.request.user.is_authenticated:
+            context['member_list'] = League.objects.get_members_leagues(self.request.user)
         matches = self.object.get_matches()
         for match in matches:
             match.get_scoreline()

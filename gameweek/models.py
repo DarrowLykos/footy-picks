@@ -18,6 +18,7 @@ import praw
 now = timezone.now()
 
 def randomised_password():
+    # returns a randomised 8 digit password for players to enter if they want to join the league
     letters = string.ascii_lowercase
     rand_pword = ''.join(random.choice(letters) for i in range(8))
     return rand_pword
@@ -311,6 +312,7 @@ class PredictionManager(models.Manager):
                       min_points=Min('points'),
                       ) \
             .order_by('-total_points')
+
         # .values('name', '_total_points', '_total_games')
         # .annotate(total_points=F('_total_points'), total_games=F('_total_games'))
 

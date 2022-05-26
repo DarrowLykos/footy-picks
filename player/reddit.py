@@ -1,14 +1,13 @@
 #! python3
 import praw
 import pandas as pd
-import datetime as dt
-from praw.models import MoreComments
-from django.utils import timezone
 import datetime
 from player.models import Player, User
 from bs4 import BeautifulSoup
 from gameweek.models import Game, Prediction
 from team.models import Team, Match, Competition
+import gspread
+from time import strptime
 
 
 def get_reddit_predictions(comments_id, game_id):
@@ -112,3 +111,73 @@ def get_reddit_predictions(comments_id, game_id):
         # TODO: loop comment and extract prediction
         # TODO: get matching fixture from team.matches
         # TODO: create prediction and edit the datestamp to match time
+
+
+def monthToNum(shortMonth):
+    return {
+        'Jan': 1,
+        'Feb': 2,
+        'Mar': 3,
+        'Apr': 4,
+        'May': 5,
+        'Jun': 6,
+        'Jul': 7,
+        'Aug': 8,
+        'Sep': 9,
+        'Oct': 10,
+        'Nov': 11,
+        'Dec': 12
+    }[shortMonth]
+
+
+def get_gsheet_predictions(game_id, file):
+    file = "E:\Py Projects\Footy Picks\picks\gw3.csv"
+    df = pd.read_csv(file)
+    print(df.dtypes)
+    matches = {}
+    for col in df.columns:
+        if "vs" in col:
+            teams = col.split(" vs ")
+            home_team = teams[0].strip(" \u2060")
+            print(home_team)
+
+            away_team = teams[1].strip(" \u2060")
+            print(away_team)
+            home_team = Team.objects.filter(name=home_team)[0]
+            away_team = Team.objects.filter(name=away_team)[0]
+            match = Match.objects.filter(home_team=home_team, away_team=away_team)[0]
+            matches.update({col: match})
+            print(match)
+
+            for i in range(len(df)):
+                player = df.loc[i, "Name"]
+                prediction = df.loc[i, col]
+                print(player)
+                joker = df.loc[i, "Joker Game"]
+                if joker == col:
+                    joker = True
+                else:
+                    joker = False
+                # user = User.objects.get_or_create(username=player)
+                player = Player.objects.get(user__username=player)
+                scores = prediction.split("-")
+                home_score = scores[0]
+                try:
+                    away_score = strptime(scores[1], '%b').tm_mon
+                except ValueError:
+                    away_score = scores[1]
+                game = Game.objects.get(pk=game_id)
+                game.matches.add(match)
+                prediction = Prediction.objects.get_or_create(match=match, player=player, home_score=home_score,
+                                                              away_score=away_score, game=game, joker=joker,
+                                                              valid_override=True)
+
+                # prediction.valid_override = True
+                # prediction.save()
+
+    '''for index, row in df.iterrows():
+        name = row['Name']
+        joker = row['Joker Game']
+        for col in row:
+            
+            print(col)'''

@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_tables2',
     'bootstrap_pagination',
-    'gsheets',
 ]
 
 LOGIN_REDIRECT_URL = '/'
@@ -141,7 +140,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
 # Static files (CSS, JavaScript, Images)
@@ -165,6 +164,3 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-GSHEETS = {
-    'CLIENT_SECRETS': 'footypicks/credentials/'
-}

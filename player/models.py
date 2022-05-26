@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.timezone import now
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import datetime
@@ -21,6 +22,26 @@ class Player(models.Model):
 
     def get_points_by_match(self, match_id):
         self.prediction_set.filter(match_id=match_id).aggregate(total_points=Sum('points'))
+
+
+class Transaction(models.Model):
+    TRANSACTION_TYPES = (
+        ("INC", "Income"),
+        ("OUT", "Outgoing"),
+        ("TRI", "Transfer in"),
+        ("TRO", "Transfer out")
+    )
+
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="transactions",
+                               related_query_name="transaction")
+    amount = models.DecimalField(decimal_places=2, max_digits=4)
+    type = models.CharField(choices=TRANSACTION_TYPES, max_length=3)
+    transfer_player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="transfers",
+                                        related_query_name="transfers", blank=True, null=True,
+                                        verbose_name="Transferred from/to")
+    date = models.DateField(default=now)
+    pending = models.BooleanField(default=True)
+
 
 """
 #@receiver(post_save, sender=User)

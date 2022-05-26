@@ -3,6 +3,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 import requests
 import dateutil.parser
+import pytz
 
 # Create your models here.
 COUNTRY_CHOICES = (
@@ -177,9 +178,11 @@ class Match(models.Model):
             ko_date = datetime.now(self.ko_date)
         except:
             ko_date = self.ko_date
-        match_status = self.status != "Match Finished" and self.status != "Match Postponed" and ko_date < datetime.now()
+        match_status = self.status != "Match Finished" and \
+                       self.status != "Match Postponed" and \
+                       ko_date < datetime.now(pytz.utc)
 
-        if (match_status and self.last_api < (datetime.now() - timedelta(minutes=15))) or force_update:
+        if (match_status and self.last_api < (datetime.now(pytz.utc) - timedelta(minutes=15))) or force_update:
             r = requests.get(api_url)
             self.last_api = datetime.now()
             self.save()

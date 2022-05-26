@@ -2,6 +2,7 @@
 {% block content %}
 {% load humanize %}
 
+{% load bootstrap_pagination %}
 <div class="ss-widget">
     <div class="section-title sidebar-title">
         <h5>Leaderboard</h5></div>
@@ -49,5 +50,10 @@
         </tr>
         {% endfor %}
     </table>
+    <div>
+        {% bootstrap_paginate leaderboard range=10 extra_pagination_classes="pagination-sm justify-content-center"
+        url_param_name="leaderboard" %}
+    </div>
 </div>
+
 {% endblock %}

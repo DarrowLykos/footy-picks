@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
 # Register your models here.
-from .models import Player
+from .models import Player, Transaction
 #from .models import Profile
 #
 #class PlayerInline(admin.StackedInline):
@@ -25,3 +25,4 @@ from .models import Player
 #admin.site.register(User, CustomUserAdmin)
 
 admin.site.register(Player)
+admin.site.register(Transaction)

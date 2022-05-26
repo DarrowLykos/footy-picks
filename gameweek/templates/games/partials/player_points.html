@@ -15,10 +15,14 @@
                     {% if pred.match == match %}
                     <td class="st-option">
                         <div class="row">
+                            {% if match.home_team.thumbnail %}
                             <div class="col-2"><img style="max-width: 20px" src="{{ match.home_team.thumbnail.url }}">
+                                {% endif %}
                             </div>
                             <div class="col-8 align-middle"><h5>{{ match.short_name }}</h5></div>
+                            {% if match.away_team.thumbnail %}
                             <div class="col-2"><img style="max-width: 20px" src="{{ match.away_team.thumbnail.url }}">
+                                {% endif %}
                             </div>
                         </div>
                         <h4>{{ pred.predicted_score }}
