@@ -77,6 +77,6 @@ update-checker==0.18.0
 uritemplate==3.0.1
 urllib3==1.25.10
 websocket-client==0.57.0
-Werkzeug==1.0.1
+Werkzeug==2.2.3
 yarg==0.1.9
 zope.interface==5.1.0
